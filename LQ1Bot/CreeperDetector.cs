@@ -8,9 +8,9 @@ using System.Web;
 using TinyPinyin;
 
 namespace LQ1Bot {
-    partial class LQ1Bot {
+    static class CreeperDetector {
         #region 终极爬行者检测模块
-        private static bool IsCreeper(string msg) {
+        public static bool IsCreeper(string msg) {
             msg = CharReplace(msg);
             msg += Reverse(msg);
             if (Regex.IsMatch(msg, @"^.*([机木]{1,}.{0,6}器{1,}.{0,6}人{1,}.{0,300}爬)|(爬{1,}.{0,300}[机木]{1,}.{0,6}器{1,}.{0,6}人).*$") ||
