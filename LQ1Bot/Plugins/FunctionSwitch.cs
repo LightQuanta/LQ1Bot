@@ -109,13 +109,24 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (text == "!plugins") {
-                List<string> plugins = new List<string>();
-                PluginController.PluginInstance.ForEach(o => {
-                    if (o.CanDisable) {
-                        plugins.Add(o.PluginName);
+                List<string> Enabled = new List<string>();
+                List<string> Disabled = new List<string>();
+                if (Config.TryGetValue(e.Sender.Group.Id, out Dictionary<string, bool> cfg)) {
+                    foreach (var v in cfg) {
+                        if (v.Value) {
+                            Enabled.Add(v.Key);
+                        } else {
+                            Disabled.Add(v.Key);
+                        }
                     }
-                });
-                await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("所有可用插件\n" + string.Join(" ", plugins)));
+                } else {
+                    InitGroup(e.Sender.Group.Id);
+                    cfg = Config.GetValueOrDefault(e.Sender.Group.Id);
+                    foreach (var v in cfg) {
+                        Enabled.Add(v.Key);
+                    }
+                }
+                await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("所有可用插件\n已启用：" + (Enabled.Count == 0 ? "无" : string.Join(" ", Enabled)) + "\n已禁用：" + (Disabled.Count == 0 ? "无" : string.Join(" ", Disabled))));
                 return true;
             }
             return false;
