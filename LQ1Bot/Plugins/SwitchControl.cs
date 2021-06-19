@@ -13,6 +13,7 @@ namespace LQ1Bot.Plugins {
         public override int Priority => 20000;
 
         public override string PluginName => "SwitchControl";
+        public override bool CanDisable => false;
 
         private static HashSet<long> BlacklistGroups;
 

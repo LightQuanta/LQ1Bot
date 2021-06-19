@@ -12,6 +12,8 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "DebugTool";
 
+        public override bool CanDisable => true;
+
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             string text = Utils.GetMessageText(e.Chain).ToLower();
             if (text == "picinfo") {
@@ -30,6 +32,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain).ToLower();
             if (text == "picinfo") {
                 List<string> picresult = new List<string>();

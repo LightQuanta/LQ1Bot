@@ -13,8 +13,12 @@ namespace LQ1Bot.Plugins {
         public override int Priority => 9999;
 
         public override string PluginName => "KusaRecorder";
+        public override bool CanDisable => true;
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
             #region 生草榜查询
@@ -254,6 +258,7 @@ namespace LQ1Bot.Plugins {
                     Console.WriteLine("写入数据库出现错误\n" + ee.Message);
                     Console.ResetColor();
                 }
+                return false;
             }
             #endregion
             return false;

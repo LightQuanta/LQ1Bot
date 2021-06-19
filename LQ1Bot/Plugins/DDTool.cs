@@ -15,6 +15,8 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "DDTool";
 
+        public override bool CanDisable => true;
+
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             string text = Utils.GetMessageText(e.Chain).ToLower();
             long q = e.Sender.Id;
@@ -116,6 +118,9 @@ vtb信息
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain).ToLower();
             long q = e.Sender.Group.Id;
             switch (text) {

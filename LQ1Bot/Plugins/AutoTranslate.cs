@@ -17,6 +17,9 @@ namespace LQ1Bot.Plugins {
         public override int Priority => 9988;
 
         public override string PluginName => "AutoTranslate";
+
+        public override bool CanDisable => true;
+
         private readonly Dictionary<long, string> AutoTranslateList = new Dictionary<long, string>();
 
         public AutoTranslate() {
@@ -24,6 +27,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id,PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             #region 自动翻译
             if (AutoTranslateList.ContainsKey(e.Sender.Id)) {
@@ -52,6 +58,7 @@ namespace LQ1Bot.Plugins {
                         await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"【{TranslationResult}】"));
                     }
                 } catch (Exception) { }
+                return false;
             }
             if (Regex.IsMatch(text, @"^autotranslate \d+ \w+")) {
                 if (long.TryParse(text.Split(' ')[1], out long target)) {

@@ -11,11 +11,12 @@ namespace LQ1Bot.Plugins {
         public override int Priority => int.MaxValue;
 
         public override string PluginName => "MsgInform";
+        public override bool CanDisable => false;
 
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             long q = e.Sender.Id;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"FriendMessage\t{q}");
+            Console.WriteLine($"FriendMessage\t{e.Sender.Name}({q})");
             Console.ResetColor();
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
@@ -26,7 +27,7 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
             long q = e.Sender.Group.Id;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"GroupMessage\t{q}");
+            Console.WriteLine($"GroupMessage\t{e.Sender.Group.Name}({e.Sender.Group.Id})");
             Console.ResetColor();
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
@@ -37,7 +38,7 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> TempMessage(MiraiHttpSession session, ITempMessageEventArgs e) {
             long q = e.Sender.Group.Id;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"TempMessage\t{q}");
+            Console.WriteLine($"TempMessage\t{e.Sender.Group.Name}({e.Sender.Group.Name})");
             Console.ResetColor();
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();

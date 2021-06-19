@@ -11,6 +11,7 @@ namespace LQ1Bot.Plugins {
     class RndPwdGen : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 9990;
 
+        public override bool CanDisable => true;
         public override string PluginName => "RandomPasswordGenerator";
 
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
@@ -32,6 +33,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain).ToLower();
             #region 强随机密码生成器
             if (Regex.IsMatch(text, @"^[!！]pwd(?<len> \d+)?(?<pat> \S+)?$")) {

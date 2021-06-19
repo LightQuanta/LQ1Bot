@@ -11,6 +11,7 @@ namespace LQ1Bot.Plugins {
     class Picker : PluginBase,IGroupMessage {
         public override int Priority => 9991;
 
+        public override bool CanDisable => true;
         public override string PluginName => "Picker";
         struct Pick {
             public long qq;
@@ -22,6 +23,9 @@ namespace LQ1Bot.Plugins {
 
         private readonly List<Pick> PickRecord = new List<Pick>();
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain).ToLower();
             long q = e.Sender.Group.Id;
             #region 抽奖

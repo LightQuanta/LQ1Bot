@@ -12,6 +12,8 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "ExceptionGenerator";
 
+        public override bool CanDisable => true;
+
         private readonly List<Type> ExceptionList = new List<Type>();
         public ExceptionGenerator() {
             var err = new Exception();
@@ -45,6 +47,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             switch (Utils.GetMessageText(e.Chain)) {
                 #region 手动报错
                 case "来点bug":

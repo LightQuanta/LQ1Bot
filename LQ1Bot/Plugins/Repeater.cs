@@ -9,11 +9,15 @@ using Mirai_CSharp.Plugin.Interfaces;
 namespace LQ1Bot.Plugins {
     class Repeater : PluginBase, IGroupMessage {
         public override int Priority => 1000;
+        public override bool CanDisable => true;
 
         public override string PluginName => "Repeater";
 
         private readonly Dictionary<long, (string Msg, int Count)> MsgRepeat = new Dictionary<long, (string, int)>();
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
             #region 复读机

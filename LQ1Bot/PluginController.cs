@@ -6,7 +6,7 @@ using Mirai_CSharp;
 namespace LQ1Bot.Plugins {
     class PluginController {
         private readonly MiraiHttpSession session;
-        private readonly List<PluginBase> PluginInstance = new List<PluginBase>();
+        public static readonly List<PluginBase> PluginInstance = new List<PluginBase>();
         public PluginController(MiraiHttpSession session) {
             this.session = session;
         }
@@ -19,7 +19,7 @@ namespace LQ1Bot.Plugins {
                 PluginInstance.Add(Plugin);
             }
             foreach (var Plugin in PluginInstance.OrderByDescending(o => o.Priority)) {
-                Console.WriteLine($"[{Plugin.Priority}]\t{Plugin.PluginName}");
+                Console.WriteLine($"[{Plugin.Priority}]\t\t{Plugin.PluginName}");
                 session.AddPlugin(Plugin);
             }
             Console.ResetColor();

@@ -14,6 +14,7 @@ namespace LQ1Bot.Plugins {
         public override int Priority => 9994;
 
         public override string PluginName => "Hitokoto";
+        public override bool CanDisable => true;
 
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             #region 一言
@@ -46,6 +47,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             #region 一言
             if (Utils.GetMessageText(e.Chain) == "一言") {
                 Console.ForegroundColor = ConsoleColor.Green;

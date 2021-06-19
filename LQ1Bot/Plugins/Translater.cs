@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 namespace LQ1Bot.Plugins {
     class Translater : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 9989;
+        public override bool CanDisable => true;
 
         public override string PluginName => "Translater";
 
@@ -55,6 +56,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             #region 机翻
             if (Regex.IsMatch(text, @"^翻译(\w+)? .+$")) {

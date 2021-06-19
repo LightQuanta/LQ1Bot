@@ -18,6 +18,7 @@ namespace LQ1Bot.Plugins {
         public override int Priority => 9998;
 
         public override string PluginName => "Meme";
+        public override bool CanDisable => true;
 
         private MemeManager MemeMgr;
 
@@ -205,6 +206,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
             #region meme添加管理

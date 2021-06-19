@@ -14,6 +14,7 @@ namespace LQ1Bot.Plugins {
         public override int Priority => 9996;
 
         public override string PluginName => "OsuQuery";
+        public override bool CanDisable => true;
 
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             string text = Utils.GetMessageText(e.Chain);
@@ -136,6 +137,9 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
             #region OSU

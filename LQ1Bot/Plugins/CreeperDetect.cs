@@ -13,7 +13,12 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "CreeperDetector";
 
+        public override bool CanDisable => true;
+
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
             if (e.Sender.Name.Length < 10 && CreeperDetector.IsCreeper(e.Sender.Name)) {

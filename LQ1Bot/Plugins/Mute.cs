@@ -14,10 +14,14 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "Mute";
 
+        public override bool CanDisable => true;
+
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+                return false;
+            }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
-            Console.WriteLine("Mute");
             #region 禁言抽奖
             if (text == "禁言抽奖") {
                 if (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner) {
