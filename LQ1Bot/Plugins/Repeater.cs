@@ -32,6 +32,7 @@ namespace LQ1Bot.Plugins {
                 }
             } else {
                 MsgRepeat.Add(q, (text, 1));
+                return false;
             }
             #endregion
             return false;
