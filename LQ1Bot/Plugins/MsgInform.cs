@@ -12,7 +12,7 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "MsgInform";
 
-        public Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
+        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             long q = e.Sender.Id;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"FriendMessage\t{q}");
@@ -20,10 +20,10 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
             Console.WriteLine(text);
-            return new Task<bool>(() => false);
+            return false;
         }
 
-        public Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
+        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
             long q = e.Sender.Group.Id;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"GroupMessage\t{q}");
@@ -31,10 +31,10 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
             Console.WriteLine(text);
-            return new Task<bool>(() => false);
+            return false;
         }
 
-        public Task<bool> TempMessage(MiraiHttpSession session, ITempMessageEventArgs e) {
+        public async Task<bool> TempMessage(MiraiHttpSession session, ITempMessageEventArgs e) {
             long q = e.Sender.Group.Id;
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"TempMessage\t{q}");
@@ -42,7 +42,7 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
             Console.WriteLine(text);
-            return new Task<bool>(() => false);
+            return false;
         }
     }
 }
