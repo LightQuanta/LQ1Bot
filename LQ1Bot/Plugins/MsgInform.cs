@@ -8,7 +8,7 @@ using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
     class MsgInform : PluginBase, IGroupMessage, IFriendMessage, ITempMessage {
-        public override int Priority => int.MaxValue;
+        public override int Priority => 99999;
 
         public override string PluginName => "MsgInform";
         public override bool CanDisable => false;

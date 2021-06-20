@@ -29,11 +29,6 @@ namespace LQ1Bot.Plugins {
                     Config.Add(Group, d);
                 }
             }
-            foreach (var vvv in Config.GetValueOrDefault(235107078)) {
-                Console.WriteLine(vvv.Key + "-" + vvv.Value);
-            }
-            Console.WriteLine(Config.GetValueOrDefault(235107078).GetValueOrDefault("Meme"));
-            Console.WriteLine(Config.GetValueOrDefault(235107078).GetValueOrDefault("Memessss"));
         }
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
             string text = Utils.GetMessageText(e.Chain);
