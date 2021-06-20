@@ -20,10 +20,10 @@ namespace LQ1Bot.Plugins {
             if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
                 return false;
             }
-            string text = Utils.GetMessageText(e.Chain);
+            string text = Utils.GetMessageText(e.Chain).ToLower().Trim();
             long q = e.Sender.Group.Id;
             #region 禁言抽奖
-            if (text == "禁言抽奖") {
+            if (text == "禁言抽奖" || text == "加班抽奖") {
                 if (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner) {
                     await session.SendGroupMessageAsync(q, new PlainMessage($"恭喜{e.Sender.Name}抽中了1145141919810分钟禁言套餐！"));
                     return true;
@@ -64,42 +64,43 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             #endregion
-            #region 自定义禁言
-            if (Regex.IsMatch(text.ToLower().Trim(), @"^自助禁言 \d+$")) {
+            #region 自助禁言
+            if (text.StartsWith("自助禁言 ") || text.StartsWith("自助加班 ")) {
                 if (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner) {
                     await session.SendGroupMessageAsync(q, new PlainMessage("在？有种把管理卸了"));
                     return false;
                 }
+                if (int.TryParse(text[5..],out int stime)) {
+                    if (stime <= 0) {
+                        await session.SendGroupMessageAsync(q, new PlainMessage($"在？教我怎么设置{stime}分钟禁言"));
+                    } else {
+                        stime = stime > 720 ? 720 : stime;
 
-                int stime = int.Parse(text.Trim()[5..]);
+                        await session.SendGroupMessageAsync(q, new PlainMessage($"恭喜{e.Sender.Name}成功领取了{stime}分钟的禁言套餐！"));
+                        await session.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(stime));
 
-                if (stime <= 0) {
-                    await session.SendGroupMessageAsync(q, new PlainMessage("时间都打不对还想领禁言套餐？"));
-                } else {
-                    stime = stime > 43200 ? 43200 : stime;
+                        try {
+                            SqliteConnection conn = new SqliteConnection("Data Source=chat.db");
+                            conn.Open();
+                            SqliteCommand cmd = new SqliteCommand("", conn) {
+                                CommandText = $"insert into main values (strftime('%Y-%m-%d %H:%M:%f','now','localtime'),@nickname,{e.Sender.Id},{q},'creep')"
+                            };
+                            cmd.Parameters.AddWithValue("@nickname", e.Sender.Name);
 
-                    await session.SendGroupMessageAsync(q, new PlainMessage($"恭喜{e.Sender.Name}成功领取了{stime}分钟的禁言套餐！"));
-                    await session.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(stime));
+                            SqliteDataReader dr = cmd.ExecuteReader();
+                            dr.Close();
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
+                            conn.Close();
 
-                    try {
-                        SqliteConnection conn = new SqliteConnection("Data Source=chat.db");
-                        conn.Open();
-                        SqliteCommand cmd = new SqliteCommand("", conn) {
-                            CommandText = $"insert into main values (strftime('%Y-%m-%d %H:%M:%f','now','localtime'),@nickname,{e.Sender.Id},{q},'creep')"
-                        };
-                        cmd.Parameters.AddWithValue("@nickname", e.Sender.Name);
-
-                        SqliteDataReader dr = cmd.ExecuteReader();
-                        dr.Close();
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        conn.Close();
-
-                        Console.ResetColor();
-                    } catch (Exception ee) {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("写入数据库出现错误\n" + ee.Message);
-                        Console.ResetColor();
+                            Console.ResetColor();
+                        } catch (Exception ee) {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("写入数据库出现错误\n" + ee.Message);
+                            Console.ResetColor();
+                        }
                     }
+                } else {
+                    await session.SendGroupMessageAsync(q, new PlainMessage("在？你管这叫int32整数？"));
                 }
                 return true;
             }
