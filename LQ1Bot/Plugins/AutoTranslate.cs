@@ -32,6 +32,21 @@ namespace LQ1Bot.Plugins {
             }
             string text = Utils.GetMessageText(e.Chain);
             #region 自动翻译
+            if (Regex.IsMatch(text, @"^autotranslate \d+ \w+")) {
+                if (long.TryParse(text.Split(' ')[1], out long target)) {
+                    string TargetLang = text.Split(' ')[2];
+                    if (TargetLang == "reset") {
+                        AutoTranslateList.Remove(target);
+                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"已为QQ号{target}关闭自动翻译"));
+                        return true;
+                    } else {
+                        AutoTranslateList.Remove(target);
+                        AutoTranslateList.Add(target, text.Split(' ')[2]);
+                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"已为QQ号{target}开启自动翻译"));
+                    }
+                }
+                return true;
+            }
             if (AutoTranslateList.ContainsKey(e.Sender.Id)) {
                 string ToTranslate = text;
                 string Lang = AutoTranslateList.GetValueOrDefault(e.Sender.Id);
@@ -59,21 +74,6 @@ namespace LQ1Bot.Plugins {
                     }
                 } catch (Exception) { }
                 return false;
-            }
-            if (Regex.IsMatch(text, @"^autotranslate \d+ \w+")) {
-                if (long.TryParse(text.Split(' ')[1], out long target)) {
-                    string TargetLang = text.Split(' ')[2];
-                    if (TargetLang == "reset") {
-                        AutoTranslateList.Remove(target);
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"已为QQ号{target}关闭自动翻译"));
-                        return true;
-                    } else {
-                        AutoTranslateList.Remove(target);
-                        AutoTranslateList.Add(target, text.Split(' ')[2]);
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"已为QQ号{target}开启自动翻译"));
-                    }
-                }
-                return true;
             }
             #endregion
             return false;
