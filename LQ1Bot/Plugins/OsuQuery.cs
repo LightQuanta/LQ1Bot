@@ -133,7 +133,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             #endregion
-            return false;
+            return await Task.Run(() => false);
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
@@ -188,7 +188,7 @@ namespace LQ1Bot.Plugins {
                                 Console.ForegroundColor = ConsoleColor.Yellow;
                                 Console.WriteLine("404 not found");
                                 Console.ResetColor();
-                                session.SendGroupMessageAsync(q, new PlainMessage("未找到该玩家！"));
+                                await session.SendGroupMessageAsync(q, new PlainMessage("未找到该玩家！"));
                                 break;
 
                             default:

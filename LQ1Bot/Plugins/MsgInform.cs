@@ -21,7 +21,7 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
             Console.WriteLine(text);
-            return false;
+            return await Task.Run(() => false);
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
@@ -32,7 +32,7 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
             Console.WriteLine(text);
-            return false;
+            return await Task.Run(() => false);
         }
 
         public async Task<bool> TempMessage(MiraiHttpSession session, ITempMessageEventArgs e) {
@@ -43,7 +43,7 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
             Console.WriteLine(text);
-            return false;
+            return await Task.Run(() => false);
         }
     }
 }
