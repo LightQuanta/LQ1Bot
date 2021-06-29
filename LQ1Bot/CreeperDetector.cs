@@ -150,6 +150,7 @@ namespace LQ1Bot {
             s = s.Replace("ㄖㄣˊ", "人");
             s = s.Replace("ㄆㄚˊ", "爬");
             s = s.Replace("ㄅㄚ", "爬");
+            s = s.Replace("怕", "");
             s = Regex.Replace(s, "zhua.{0,2}ba", "爬");
             s = Regex.Replace(s, @"[口ロ]+.?[ボ木术]+.?ッ+.?[ト卜ド]|🤖|篮.?球|🏀|lq|basketball|lq|lightquanta", "机器人");
             s = Regex.Replace(s, @"[啪钯杷耙琶葩趴扒耙鈀🧗啪🚼🦂巴巳パぱ⑧筢䯲掱苩]|c.*r.*a.*w.*l|c.*r.*e.*p|c.*l.*i.*m.*b|pa|滚|匍.*匐|g.*u.*n|pa", "爬");
