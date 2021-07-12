@@ -47,10 +47,10 @@ namespace LQ1Bot.Plugins {
                 string AllRep = MemeMgr.GetMeme(meme);
                 if (AllRep != null) {
                     foreach (var r in AllRep.Split("|")) {
-                        if (rep == r) {
+                        if (r.Contains(rep)) {
                             Rep.Remove(q);
-                            Rep.Add(q, (meme, rep));
-                            await session.SendFriendMessageAsync(q, new PlainMessage($"已指定回复内容\n{meme} -> {rep}"));
+                            Rep.Add(q, (meme, r));
+                            await session.SendFriendMessageAsync(q, new PlainMessage($"已指定回复内容\n{meme} -> {r}"));
                             return true;
                         }
                     }
