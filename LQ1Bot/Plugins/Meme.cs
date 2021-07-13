@@ -198,7 +198,11 @@ namespace LQ1Bot.Plugins {
             #region meme回复
             if (Rep.TryGetValue(q, out (string, string) valll)) {
                 if (text == valll.Item1) {
-                    await session.SendFriendMessageAsync(q, new PlainMessage(valll.Item2));
+                    if (valll.Item2.StartsWith("[picture]") && valll.Item2.Length > 9) {
+                        await session.SendImageToFriendAsync(q, new string[] { $"http://127.0.0.1:23333/botpicture/{valll.Item2[9..]}" });
+                    } else {
+                        int n = await session.SendFriendMessageAsync(q, new PlainMessage(valll.Item2));
+                    }
                     Rep.Remove(q);
                     return true;
                 }
@@ -262,7 +266,19 @@ namespace LQ1Bot.Plugins {
             #region meme回复
             if (Rep.TryGetValue(e.Sender.Id, out (string, string) valll)) {
                 if (text == valll.Item1) {
-                    await session.SendGroupMessageAsync(q, new PlainMessage(valll.Item2));
+                    if (valll.Item2.StartsWith("[picture]") && valll.Item2.Length > 9) {
+                        await session.SendImageToGroupAsync(q, new string[] { $"http://127.0.0.1:23333/botpicture/{valll.Item2[9..]}" });
+                    } else {
+                        int n = await session.SendGroupMessageAsync(q, new PlainMessage(valll.Item2));
+                        if (valll.Item2.Length > 200) {
+                            (new Thread(new ThreadStart(async () => {
+                                Thread.Sleep(60000);
+                                try {
+                                    await session.RevokeMessageAsync(n);
+                                } catch (Exception) { }
+                            }))).Start();
+                        }
+                    }
                     Rep.Remove(e.Sender.Id);
                     return true;
                 }
