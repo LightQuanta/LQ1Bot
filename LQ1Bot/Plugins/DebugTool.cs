@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class DebugTool : PluginBase, IFriendMessage, IGroupMessage {
+
+    internal class DebugTool : PluginBase, IFriendMessage, IGroupMessage {
         public override int Priority => 2000;
 
         public override string PluginName => "DebugTool";

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Mirai_CSharp;
@@ -8,7 +6,8 @@ using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class Dice : PluginBase, IGroupMessage, IFriendMessage {
+
+    internal class Dice : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 9997;
 
         public override string PluginName => "Dice";

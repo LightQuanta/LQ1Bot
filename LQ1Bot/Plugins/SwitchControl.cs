@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Mirai_CSharp;
@@ -9,7 +8,8 @@ using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class SwitchControl : PluginBase, IGroupMessage {
+
+    internal class SwitchControl : PluginBase, IGroupMessage {
         public override int Priority => 20000;
 
         public override string PluginName => "SwitchControl";

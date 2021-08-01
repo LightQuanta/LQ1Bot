@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Mirai_CSharp;
@@ -8,12 +7,14 @@ using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class Picker : PluginBase,IGroupMessage {
+
+    internal class Picker : PluginBase, IGroupMessage {
         public override int Priority => 9991;
 
         public override bool CanDisable => true;
         public override string PluginName => "Picker";
-        struct Pick {
+
+        private struct Pick {
             public long qq;
             public string Name;
             public int PickCount;
@@ -22,6 +23,7 @@ namespace LQ1Bot.Plugins {
         }
 
         private readonly List<Pick> PickRecord = new List<Pick>();
+
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
             if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
                 return false;

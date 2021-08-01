@@ -6,7 +6,9 @@ using System.Text;
 using Mirai_CSharp.Models;
 
 namespace LQ1Bot {
-    static class Utils {
+
+    internal static class Utils {
+
         /// <summary>
         /// 获取一个类在其所在的程序集中的所有子类
         /// </summary>
@@ -32,6 +34,7 @@ namespace LQ1Bot {
                     case "Plain":
                         text += ((PlainMessage) v).Message;
                         break;
+
                     case "At":
                         AtMessage am = (AtMessage) v;
                         if (am.Target == 1727089824 || am.Target == 2224899528)
@@ -86,6 +89,7 @@ namespace LQ1Bot {
             }
             return sb.ToString();
         }
+
         public static string RandomMsg(params string[] s) {
             Random r = new Random();
             return s[(int) Math.Round(r.NextDouble() * (s.Length - 1))];

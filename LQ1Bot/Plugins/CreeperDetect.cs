@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Mirai_CSharp;
@@ -8,7 +6,8 @@ using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class CreeperDetect : PluginBase, IGroupMessage, IFriendMessage, ITempMessage {
+
+    internal class CreeperDetect : PluginBase, IGroupMessage, IFriendMessage, ITempMessage {
         public override int Priority => 10000;
 
         public override string PluginName => "CreeperDetector";
@@ -70,6 +69,7 @@ namespace LQ1Bot.Plugins {
             }
             return false;
         }
+
         public async Task<bool> TempMessage(MiraiHttpSession session, ITempMessageEventArgs e) {
             if (CreeperDetector.IsCreeper(Utils.GetMessageText(e.Chain))) {
                 await session.SendTempMessageAsync(e.Sender.Id, e.Sender.Group.Id, new PlainMessage("爬"));

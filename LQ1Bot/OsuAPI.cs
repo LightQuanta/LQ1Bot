@@ -7,6 +7,7 @@ using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 
 namespace LQ1Bot {
+
     public static class OsuAPI {
         public const string OSU = "osu";
         public const string MANIA = "mania";
@@ -16,6 +17,7 @@ namespace LQ1Bot {
         public static string mode = "osu";
 
         #region POST GET模块
+
         /// <summary>
         /// 指定Post地址使用Get 方式获取全部字符串
         /// </summary>
@@ -50,11 +52,11 @@ namespace LQ1Bot {
             }
             return result;
         }
+
         #endregion
 
         public static string OsuApiId;
         public static string OsuApiSecret;
-
 
         public static string GetWithToken(string url, string token) {
             string result = "";
@@ -76,8 +78,10 @@ namespace LQ1Bot {
                     switch (response.StatusCode) {
                         case HttpStatusCode.NotFound:
                             return "404";
+
                         case HttpStatusCode.Redirect:
                             return e.Response.Headers["Location"];
+
                         case HttpStatusCode.Unauthorized:
                             return "auth";
                     }
@@ -88,7 +92,7 @@ namespace LQ1Bot {
             }
         }
 
-        public static string GetOAuthToken(string OsuApiId,string OsuApiSecret) {
+        public static string GetOAuthToken(string OsuApiId, string OsuApiSecret) {
             Dictionary<string, string> d = new Dictionary<string, string> {
                 { "client_id", OsuApiId },
                 { "client_secret", OsuApiSecret },
@@ -99,6 +103,7 @@ namespace LQ1Bot {
             OAuthTokenResponce o = JsonConvert.DeserializeObject<OAuthTokenResponce>(responce);
             return o.access_token;
         }
+
         public static string GetUserInfo(string name, string token) {
             string rep = GetWithToken(@"https://osu.ppy.sh/api/v2/users/" + name + "/" + mode, token);
             if (rep != null) {
@@ -112,6 +117,7 @@ namespace LQ1Bot {
                 return null;
             }
         }
+
         public static PInfo Query(string name) {
             PInfo p;
             p.pp = 0; p.rank = 0; p.crank = 0; p.playcount = 0;
@@ -182,12 +188,14 @@ namespace LQ1Bot {
             conn.Close();
             return p;
         }
+
         public struct PInfo {
             public int pp;
             public int rank;
             public int crank;
             public int playcount;
         }
+
         public static void Update(string name, int pp, int rank, int crank, int playcount) {
             try {
                 using SqliteConnection conn = new SqliteConnection("Data Source=osu.db");
@@ -224,6 +232,7 @@ namespace LQ1Bot {
                 Console.WriteLine(ex.Message);
             }
         }
+
         public static string ReadToken() {
             string token = null;
             try {
@@ -239,16 +248,17 @@ namespace LQ1Bot {
             }
             return token;
         }
+
         public static string UpdateToken() {
             using (StreamWriter sw = new StreamWriter("osu.token")) {
-                string token = OsuAPI.GetOAuthToken(OsuApiId,OsuApiSecret);
+                string token = OsuAPI.GetOAuthToken(OsuApiId, OsuApiSecret);
                 sw.WriteLine(token);
                 return token;
             }
         }
     }
 
-    class OAuthTokenResponce {
+    internal class OAuthTokenResponce {
         public string token_type { get; set; }
         public string expires_in { get; set; }
         public string access_token { get; set; }

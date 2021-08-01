@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
@@ -10,7 +8,8 @@ using Mirai_CSharp.Plugin.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
-    class Hitokoto : PluginBase, IGroupMessage, IFriendMessage {
+
+    internal class Hitokoto : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 9994;
 
         public override string PluginName => "Hitokoto";

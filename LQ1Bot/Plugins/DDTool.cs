@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
@@ -10,7 +8,8 @@ using Mirai_CSharp.Plugin.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
-    class DDTool : PluginBase, IFriendMessage, IGroupMessage {
+
+    internal class DDTool : PluginBase, IFriendMessage, IGroupMessage {
         public override int Priority => 9995;
 
         public override string PluginName => "DDTool";

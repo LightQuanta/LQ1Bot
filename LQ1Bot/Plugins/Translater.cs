@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,7 +11,8 @@ using Mirai_CSharp.Plugin.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
-    class Translater : PluginBase, IGroupMessage, IFriendMessage {
+
+    internal class Translater : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 9989;
         public override bool CanDisable => true;
 

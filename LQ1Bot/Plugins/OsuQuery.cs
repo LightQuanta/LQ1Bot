@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +8,8 @@ using Mirai_CSharp.Plugin.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
-    class OsuQuery : PluginBase, IFriendMessage, IGroupMessage {
+
+    internal class OsuQuery : PluginBase, IFriendMessage, IGroupMessage {
         public override int Priority => 9996;
 
         public override string PluginName => "OsuQuery";

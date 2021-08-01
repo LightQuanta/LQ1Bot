@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
@@ -13,7 +12,8 @@ using Mirai_CSharp.Plugin.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
-    class AutoTranslate : PluginBase, IGroupMessage {
+
+    internal class AutoTranslate : PluginBase, IGroupMessage {
         public override int Priority => 9988;
 
         public override string PluginName => "AutoTranslate";
@@ -27,7 +27,7 @@ namespace LQ1Bot.Plugins {
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id,PluginName)) {
+            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
                 return false;
             }
             string text = Utils.GetMessageText(e.Chain);

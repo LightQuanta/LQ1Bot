@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,20 +6,19 @@ using LQ1Bot.Plugins;
 using LQ1Bot.Secret;
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
-using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot {
-    class Program {
 
+    internal class Program {
         public static LQ1BotConfig Secret;
-        static async Task Main(string[] args) {
+
+        private static async Task Main(string[] args) {
             Secret = new LQ1BotConfig();
             Secret.Init();
 
             MiraiHttpSessionOptions Options = new MiraiHttpSessionOptions(Secret.MiraiIp, Secret.MiraiPort, Secret.MiraiSecret);
 
             await using MiraiHttpSession Session = new MiraiHttpSession();
-
 
             //特殊定制功能就不公开了
             SpecialFunction sf = new SpecialFunction(Secret);

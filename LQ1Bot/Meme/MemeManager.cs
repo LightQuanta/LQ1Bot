@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,15 +9,19 @@ using System.Text.RegularExpressions;
 using System.Text.Unicode;
 
 namespace LQ1Bot.Meme {
-    class MemeManager {
+
+    internal class MemeManager {
         private HashSet<MemeBase> memes = new HashSet<MemeBase>();
 
         [JsonIgnore]
         public int MemeCount { get; }
+
         [JsonIgnore]
         public string SavePath { get; set; }
+
         public long LastUpdateTime { get; set; }
         public List<long> Admin { get; set; }
+
         public HashSet<MemeBase> Memes {
             get => memes;
             set {
@@ -42,12 +45,15 @@ namespace LQ1Bot.Meme {
             RemoveMeme(MemeName);
             return AddNewMeme(MemeName, Content.ToHashSet(), Type);
         }
+
         public bool SetMeme(string MemeName, params string[] Content) {
             return SetMeme(MemeName, Content.ToHashSet());
         }
+
         public bool AddMemeReply(string MemeName, params string[] Content) {
             return AddMemeReply(MemeName, Content.ToHashSet());
         }
+
         public bool AddMemeReply(string MemeName, HashSet<string> Content) {
             bool modified = false;
             bool hasMeme = false;
@@ -69,12 +75,15 @@ namespace LQ1Bot.Meme {
             }
             return modified;
         }
+
         public bool AddNewMeme(string MemeName, params string[] Content) {
             return AddNewMeme(MemeName, Content.ToHashSet());
         }
+
         public bool AddNewMeme(string MemeName, string Content, MemeBase.MatchType Type = MemeBase.MatchType.Equal, HashSet<string> MemeAlias = null, HashSet<long> Whitelist = null, HashSet<long> Blacklist = null) {
             return AddNewMeme(MemeName, new HashSet<string>() { Content }, Type, MemeAlias, Whitelist, Blacklist);
         }
+
         public bool AddNewMeme(string MemeName, HashSet<string> Content, MemeBase.MatchType Type = MemeBase.MatchType.Equal, HashSet<string> MemeAlias = null, HashSet<long> Whitelist = null, HashSet<long> Blacklist = null) {
             foreach (var m in Memes) {
                 if (m.Name == MemeName.ToLower() || (m.Alias?.Contains(MemeName.ToLower()) ?? false)) {
@@ -91,6 +100,7 @@ namespace LQ1Bot.Meme {
                 WhitelistGroups = Whitelist,
             });
         }
+
         public bool RemoveMeme(string MemeName) {
             foreach (var m in Memes) {
                 if (m.Name == MemeName.ToLower() || (m.Alias?.Contains(MemeName.ToLower()) ?? false)) {
@@ -100,9 +110,11 @@ namespace LQ1Bot.Meme {
             }
             return false;
         }
+
         public bool AddMemeAlias(string MemeName, params string[] Alias) {
             return AddMemeAlias(MemeName, Alias.ToHashSet());
         }
+
         public bool AddMemeAlias(string MemeName, HashSet<string> Alias) {
             foreach (var m in memes) {
                 if (m.Name == MemeName.ToLower() || (m.Alias?.Contains(MemeName.ToLower()) ?? false)) {
@@ -137,6 +149,7 @@ namespace LQ1Bot.Meme {
                             }
                         }
                         break;
+
                     case MemeBase.MatchType.StartsWith:
                         if (msg.ToLower().StartsWith(m.Name.ToLower())) {
                             return true;
@@ -150,6 +163,7 @@ namespace LQ1Bot.Meme {
                             }
                         }
                         break;
+
                     default:
                         if (m.Name == msg.ToLower() || (m.Alias?.Contains(msg.ToLower()) ?? false)) {
                             return true;
@@ -180,6 +194,7 @@ namespace LQ1Bot.Meme {
                             return rep[(new Random()).Next(rep.Count)];
                         }
                         break;
+
                     case MemeBase.MatchType.RegexReplace:
                         if (Regex.IsMatch(msg.ToLower(), m.Name)) {
                             List<string> rep = new List<string>();
@@ -200,6 +215,7 @@ namespace LQ1Bot.Meme {
                             return Regex.Replace(msg, m.Name, result);
                         }
                         break;
+
                     case MemeBase.MatchType.StartsWith:
                         if (msg.ToLower().StartsWith(m.Name.ToLower())) {
                             List<string> rep = new List<string>();
@@ -221,6 +237,7 @@ namespace LQ1Bot.Meme {
                             }
                         }
                         break;
+
                     default:
                         if (m.Name == msg.ToLower() || (m.Alias?.Contains(msg.ToLower()) ?? false)) {
                             List<string> rep = new List<string>();
@@ -247,6 +264,7 @@ namespace LQ1Bot.Meme {
             }
             return null;
         }
+
         public override string ToString() {
             var o = new JsonSerializerOptions() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
@@ -261,15 +279,19 @@ namespace LQ1Bot.Meme {
             };
             return JsonSerializer.Serialize(this, o);
         }
+
         public static MemeManager Parse(string src) {
             return JsonSerializer.Deserialize<MemeManager>(src);
         }
+
         public static MemeManager ReadFromFile(string Path) {
             return Parse(File.ReadAllText(Path));
         }
+
         public void Save() {
             File.WriteAllText(SavePath, ToIndentedString());
         }
+
         public void Save(string Path) {
             File.WriteAllText(Path, ToIndentedString());
         }

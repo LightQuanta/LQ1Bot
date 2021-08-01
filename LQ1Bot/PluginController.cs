@@ -4,12 +4,15 @@ using System.Linq;
 using Mirai_CSharp;
 
 namespace LQ1Bot.Plugins {
-    class PluginController {
+
+    internal class PluginController {
         private readonly MiraiHttpSession session;
         public static readonly List<PluginBase> PluginInstance = new List<PluginBase>();
+
         public PluginController(MiraiHttpSession session) {
             this.session = session;
         }
+
         public void LoadPlugins() {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("已找到的插件");
@@ -17,6 +20,9 @@ namespace LQ1Bot.Plugins {
             foreach (var PluginType in Type) {
                 PluginBase Plugin = (PluginBase) Activator.CreateInstance(PluginType);
                 PluginInstance.Add(Plugin);
+                if (Plugin.PluginName == "WhatIsThis") {
+                    Console.WriteLine("WhatIsThis");
+                }
             }
             foreach (var Plugin in PluginInstance.OrderByDescending(o => o.Priority)) {
                 Console.WriteLine($"[{Plugin.Priority}]\t\t{Plugin.PluginName}");

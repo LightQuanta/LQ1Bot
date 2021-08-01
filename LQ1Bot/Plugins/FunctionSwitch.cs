@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
-using System.IO;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
-    class FunctionSwitch : PluginBase, IGroupMessage {
+
+    internal class FunctionSwitch : PluginBase, IGroupMessage {
         public override int Priority => 15000;
         public override string PluginName => "FunctionSwitch";
 
@@ -26,10 +27,20 @@ namespace LQ1Bot.Plugins {
                     foreach (var oo in o) {
                         d.Add(oo.Key, bool.Parse(oo.Value.ToString()));
                     }
+                    foreach (var Plugin in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
+                        if (Plugin.CanDisable) {
+                            if (!d.ContainsKey(Plugin.PluginName)) {
+                                d.Add(Plugin.PluginName, true);
+                                Console.WriteLine(Plugin.PluginName);
+                                Console.WriteLine(d.ContainsKey(Plugin.PluginName));
+                            }
+                        }
+                    }
                     Config.Add(Group, d);
                 }
             }
         }
+
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
             string text = Utils.GetMessageText(e.Chain);
             if (text == "!createconfig" && (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner || e.Sender.Id == 2224899528)) {
@@ -126,6 +137,7 @@ namespace LQ1Bot.Plugins {
             }
             return false;
         }
+
         public static bool IsEnabled(long Group, string Name) {
             if (Config.TryGetValue(Group, out Dictionary<string, bool> cfg)) {
                 if (cfg.TryGetValue(Name, out bool enabled)) {
@@ -137,6 +149,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
         }
+
         private void Save(long Group) {
             if (Config.TryGetValue(Group, out Dictionary<string, bool> cfg)) {
                 JObject o = new JObject();
@@ -154,6 +167,7 @@ namespace LQ1Bot.Plugins {
                 File.WriteAllText("plugincfg/" + Group + ".json", o.ToString());
             }
         }
+
         private void InitGroup(long Group) {
             Config.Remove(Group);
             var d = new Dictionary<string, bool>();

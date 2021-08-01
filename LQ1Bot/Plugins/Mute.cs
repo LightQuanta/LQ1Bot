@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Mirai_CSharp;
@@ -9,7 +6,8 @@ using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class Mute : PluginBase, IGroupMessage {
+
+    internal class Mute : PluginBase, IGroupMessage {
         public override int Priority => 9993;
 
         public override string PluginName => "Mute";
@@ -70,7 +68,7 @@ namespace LQ1Bot.Plugins {
                     await session.SendGroupMessageAsync(q, new PlainMessage("在？有种把管理卸了"));
                     return false;
                 }
-                if (int.TryParse(text[5..],out int stime)) {
+                if (int.TryParse(text[5..], out int stime)) {
                     if (stime <= 0) {
                         await session.SendGroupMessageAsync(q, new PlainMessage($"在？教我怎么设置{stime}分钟禁言"));
                     } else {

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
@@ -9,7 +7,8 @@ using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class KusaRecorder : PluginBase, IGroupMessage {
+
+    internal class KusaRecorder : PluginBase, IGroupMessage {
         public override int Priority => 9999;
 
         public override string PluginName => "KusaRecorder";

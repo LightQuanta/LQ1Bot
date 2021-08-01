@@ -8,8 +8,10 @@ using System.Web;
 using TinyPinyin;
 
 namespace LQ1Bot {
-    static class CreeperDetector {
+
+    internal static class CreeperDetector {
         #region 终极爬行者检测模块
+
         public static bool IsCreeper(string msg) {
             msg = CharReplace(msg);
             msg += Reverse(msg);
@@ -23,6 +25,7 @@ namespace LQ1Bot {
                 return false;
             }
         }
+
         private static string CharReplace(string s) {
             s = s.Trim();
             #region base64解码
@@ -188,7 +191,9 @@ namespace LQ1Bot {
                 return "机器人爬";
             return s;
         }
+
         #endregion
+
         public static string Reverse(string ReverseString) {
             String output = string.Empty;
             for (int i = ReverseString.Length; i > 0; i--) {

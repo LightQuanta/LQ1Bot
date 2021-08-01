@@ -1,12 +1,11 @@
-﻿
-using System.IO;
+﻿using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 
 namespace LQ1Bot {
-    class LQ1BotConfig {
 
+    internal class LQ1BotConfig {
         public string BaiduTranslateAppId { get; set; }
         public string BaiduTranslateSecret { get; set; }
 
@@ -22,6 +21,7 @@ namespace LQ1Bot {
         public long QQ { get; set; }
 
         public string MemeBackupDirectory { get; set; }
+
         public void Init() {
             if (File.Exists("lq1bot.config")) {
                 var v = JsonSerializer.Deserialize<LQ1BotConfig>(File.ReadAllText("lq1bot.config"));

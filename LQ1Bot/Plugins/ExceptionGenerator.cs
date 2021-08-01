@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Mirai_CSharp;
 using Mirai_CSharp.Models;
 using Mirai_CSharp.Plugin.Interfaces;
 
 namespace LQ1Bot.Plugins {
-    class ExceptionGenerator : PluginBase, IGroupMessage, IFriendMessage {
+
+    internal class ExceptionGenerator : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 9992;
 
         public override string PluginName => "ExceptionGenerator";
@@ -15,6 +15,7 @@ namespace LQ1Bot.Plugins {
         public override bool CanDisable => true;
 
         private readonly List<Type> ExceptionList = new List<Type>();
+
         public ExceptionGenerator() {
             var err = new Exception();
             Stack<Type> s = new Stack<Type>();
@@ -26,6 +27,7 @@ namespace LQ1Bot.Plugins {
                 temp.ForEach(o => s.Push(o));
             }
         }
+
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             switch (Utils.GetMessageText(e.Chain)) {
                 #region 手动报错
