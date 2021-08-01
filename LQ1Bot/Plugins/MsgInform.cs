@@ -27,7 +27,7 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
             long q = e.Sender.Group.Id;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"GroupMessage\t{e.Sender.Group.Name}({e.Sender.Group.Id})");
+            Console.WriteLine($"{DateTime.Now}\nGroupMessage\t{e.Sender.Group.Name}({e.Sender.Group.Id})");
             Console.ResetColor();
             Console.WriteLine($"User:\t\t{e.Sender.Name}[{e.Sender.Id}]\nContent:\t{string.Join(null, (IEnumerable<IMessageBase>) e.Chain)}");
             string text = Utils.GetMessageText(e.Chain).Trim();
