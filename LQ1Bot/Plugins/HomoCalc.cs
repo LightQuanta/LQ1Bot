@@ -44,7 +44,7 @@ namespace LQ1Bot.Plugins {
             {16,"1+1+4+5+1+4" },
             {8,"1+1+4+5+1-4" },
             {4,"1+1+4-5-1+4" },
-            {2,"1+1*4*(5-1-4)" },
+            {2,"(-1)*(1+(4+5)/(1-4))" },
             {1,"1+1*4*(5-1-4)" },
         };
 
@@ -64,7 +64,6 @@ namespace LQ1Bot.Plugins {
             }
             List<string> nums = new List<string>();
             while (n != 0) {
-                
                 foreach (var v in BinSet) {
                     if (v.Key <= n) {
                         nums.Add(BinSet.GetValueOrDefault(v.Key));
