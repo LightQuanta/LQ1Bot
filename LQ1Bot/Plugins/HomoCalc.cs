@@ -79,8 +79,20 @@ namespace LQ1Bot.Plugins {
                 return $"{raw} = {string.Join("+", nums)}";
         }
 
-        public Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            throw new NotImplementedException();
+        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
+            string text = Utils.GetMessageText(e.Chain);
+            long q = e.Sender.Id;
+
+            if (text.StartsWith("恶臭论证 ")) {
+                text = text[5..];
+                if (int.TryParse(text, out int num)) {
+                    await session.SendFriendMessageAsync(q, new PlainMessage(Num2Homo(num)));
+                } else {
+                    await session.SendFriendMessageAsync(q, new PlainMessage("在？你管这叫int32整数？"));
+                }
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
