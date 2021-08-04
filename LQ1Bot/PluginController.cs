@@ -20,9 +20,7 @@ namespace LQ1Bot.Plugins {
             foreach (var PluginType in Type) {
                 PluginBase Plugin = (PluginBase) Activator.CreateInstance(PluginType);
                 PluginInstance.Add(Plugin);
-                if (Plugin.PluginName == "WhatIsThis") {
-                    Console.WriteLine("WhatIsThis");
-                }
+
             }
             foreach (var Plugin in PluginInstance.OrderByDescending(o => o.Priority)) {
                 Console.WriteLine($"[{Plugin.Priority}]\t\t{Plugin.PluginName}");

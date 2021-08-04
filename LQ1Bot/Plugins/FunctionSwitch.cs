@@ -18,6 +18,7 @@ namespace LQ1Bot.Plugins {
 
         public static Dictionary<long, Dictionary<string, bool>> Config = new Dictionary<long, Dictionary<string, bool>>();
 
+        //TODO: 修复新插件设置不会被保存到已存在的配置文件里的问题
         public FunctionSwitch() {
             foreach (var v in Directory.GetFiles("plugincfg")) {
                 if (long.TryParse(v.Substring(0, v.IndexOf('.'))[10..], out long Group)) {
@@ -27,15 +28,15 @@ namespace LQ1Bot.Plugins {
                     foreach (var oo in o) {
                         d.Add(oo.Key, bool.Parse(oo.Value.ToString()));
                     }
-                    foreach (var Plugin in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
-                        if (Plugin.CanDisable) {
-                            if (!d.ContainsKey(Plugin.PluginName)) {
-                                d.Add(Plugin.PluginName, true);
-                                Console.WriteLine(Plugin.PluginName);
-                                Console.WriteLine(d.ContainsKey(Plugin.PluginName));
-                            }
-                        }
-                    }
+                    //foreach (var Plugin in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
+                    //    if (Plugin.CanDisable) {
+                    //        if (!d.ContainsKey(Plugin.PluginName)) {
+                    //            d.Add(Plugin.PluginName, true);
+                    //            Console.WriteLine(Plugin.PluginName);
+                    //            Console.WriteLine(d.ContainsKey(Plugin.PluginName));
+                    //        }
+                    //    }
+                    //}
                     Config.Add(Group, d);
                 }
             }
