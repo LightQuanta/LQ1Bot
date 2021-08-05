@@ -56,7 +56,6 @@ namespace LQ1Bot.Plugins {
                 return "1+1-4+5+1-4";
             if (n == -2147483648)
                 return "-114514*(1145*14+((1-14)*51*-4+((1+14)*5-1*4)))+(1*(1+4)*514+(11+4*5+1+4))";
-            int raw = n;
             bool isNegative = false;
             if (n < 0) {
                 isNegative = true;
@@ -73,9 +72,9 @@ namespace LQ1Bot.Plugins {
                 }
             }
             if (isNegative)
-                return $"{raw} = -({string.Join("+", nums)})";
+                return $"-({string.Join("+", nums)})";
             else
-                return $"{raw} = {string.Join("+", nums)}";
+                return $"{string.Join("+", nums)}";
         }
 
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
@@ -85,7 +84,7 @@ namespace LQ1Bot.Plugins {
             if (text.StartsWith("恶臭论证 ")) {
                 text = text[5..];
                 if (int.TryParse(text, out int num)) {
-                    await session.SendFriendMessageAsync(q, new PlainMessage(Num2Homo(num)));
+                    await session.SendFriendMessageAsync(q, new PlainMessage(num + " = " + Num2Homo(num)));
                 } else {
                     await session.SendFriendMessageAsync(q, new PlainMessage("在？你管这叫int32整数？"));
                 }
