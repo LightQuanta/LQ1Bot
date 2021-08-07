@@ -103,7 +103,7 @@ namespace LQ1Bot.Plugins {
             if (text.StartsWith("恶臭论证 ")) {
                 text = text[5..];
                 if (int.TryParse(text, out int num)) {
-                    await session.SendGroupMessageAsync(q, new PlainMessage(Num2Homo(num)));
+                    await session.SendGroupMessageAsync(q, new PlainMessage(num + " = " + Num2Homo(num)));
                 } else {
                     await session.SendGroupMessageAsync(q, new PlainMessage("在？你管这叫int32整数？"));
                 }
