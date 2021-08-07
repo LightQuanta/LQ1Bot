@@ -49,12 +49,6 @@ namespace LQ1Bot.Plugins {
                     req.Headers.Add("Client-Version", "2.6.3l");
                     req.ContentType = "application/json";
 
-                    var v = req.Headers.GetEnumerator();
-                    Console.WriteLine();
-                    foreach (var vv in req.Headers.AllKeys) {
-                        Console.WriteLine(vv + ":" + req.Headers.Get(vv));
-                    }
-                    Console.WriteLine();
 
                     byte[] data = Encoding.Default.GetBytes(json);
                     req.ContentLength = data.Length;
@@ -75,15 +69,18 @@ namespace LQ1Bot.Plugins {
                             string name = dat["definitions"][0]["term"]["title"].ToString();
                             string def = dat["definitions"][0]["content"].ToString();
 
+                            //中括号去除
                             def = Regex.Replace(def, @"\[.+(,.+)*:(?<str>.+)\]", "${str}");
 
-                            await session.SendFriendMessageAsync(q, new PlainMessage($"可能的全名：{name}\n释义：{def}\nhttps://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}"));
+                            await session.SendFriendMessageAsync(q, new PlainMessage($"可能的全名：{name}\n释义：{def}\n详细信息：https://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}"));
 
+                            //添加全局冷却
                             Cooldown = DateTime.Now.AddMinutes(0.5);
 
-                            break;
+                            return true;
                         }
                     }
+                    await session.SendGroupMessageAsync(q, new PlainMessage("未找到解释！"));
                 } catch (WebException eee) {
                     if (((HttpWebResponse) eee.Response).StatusCode == HttpStatusCode.Locked) {
                         Cooldown = DateTime.Now.AddMinutes(5.0);
@@ -130,13 +127,6 @@ namespace LQ1Bot.Plugins {
                     req.Headers.Add("Client-Version", "2.6.3l");
                     req.ContentType = "application/json";
 
-                    var v = req.Headers.GetEnumerator();
-                    Console.WriteLine();
-                    foreach (var vv in req.Headers.AllKeys) {
-                        Console.WriteLine(vv + ":" + req.Headers.Get(vv));
-                    }
-                    Console.WriteLine();
-
                     byte[] data = Encoding.Default.GetBytes(json);
                     req.ContentLength = data.Length;
                     using Stream reqStream = req.GetRequestStream();
@@ -156,15 +146,18 @@ namespace LQ1Bot.Plugins {
                             string name = dat["definitions"][0]["term"]["title"].ToString();
                             string def = dat["definitions"][0]["content"].ToString();
 
+                            //中括号去除
                             def = Regex.Replace(def, @"\[.+(,.+)*:(?<str>.+)\]", "${str}");
 
-                            await session.SendGroupMessageAsync(q, new PlainMessage($"可能的全名：{name}\n释义：{def}\nhttps://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}"));
+                            await session.SendGroupMessageAsync(q, new PlainMessage($"可能的全名：{name}\n释义：{def}\n详细信息：https://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}"));
 
+                            //添加全局冷却
                             Cooldown = DateTime.Now.AddMinutes(0.5);
 
-                            break;
+                            return true;
                         }
                     }
+                    await session.SendGroupMessageAsync(q,new PlainMessage("未找到解释！"));
                 } catch (WebException eee) {
                     if (((HttpWebResponse) eee.Response).StatusCode == HttpStatusCode.Locked) {
                         Cooldown = DateTime.Now.AddMinutes(5.0);
