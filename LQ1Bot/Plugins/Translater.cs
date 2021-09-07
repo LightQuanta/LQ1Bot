@@ -21,7 +21,7 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
             string text = Utils.GetMessageText(e.Chain);
             #region 机翻
-            if (Regex.IsMatch(text, @"^翻译(\w+)? .+$")) {
+            if (Regex.IsMatch(text, @"^翻译([a-zA-Z]+)? .+$")) {
                 string ToTranslate = text[(text.IndexOf(' ') + 1)..];
                 string Lang = text[2] == ' ' ? "zh" : text.Split(' ')[0][2..];
                 string AppId = Program.Secret.BaiduTranslateAppId;
@@ -60,7 +60,7 @@ namespace LQ1Bot.Plugins {
             }
             string text = Utils.GetMessageText(e.Chain);
             #region 机翻
-            if (Regex.IsMatch(text, @"^翻译(\w+)? .+$")) {
+            if (Regex.IsMatch(text, @"^翻译([a-zA-Z]+)? .+$")) {
                 string ToTranslate = text[(text.IndexOf(' ') + 1)..];
                 string Lang = text[2] == ' ' ? "zh" : text.Split(' ')[0][2..];
                 string AppId = Program.Secret.BaiduTranslateAppId;

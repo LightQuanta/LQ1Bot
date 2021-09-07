@@ -43,17 +43,12 @@ namespace LQ1Bot {
                         break;
                 }
             }
+
             LQ1Bot plugin = new LQ1Bot(Secret);
             Session.AddPlugin(plugin);
 
             await Session.ConnectAsync(Options, Secret.QQ);
             Console.WriteLine("已成功连接至Mirai");
-
-            (new Thread(new ThreadStart(async () => {
-                Thread.Sleep(60 * 1000 * 3);
-                await Session.DisposeAsync();
-                Environment.Exit(0);
-            }))).Start();
 
             //控制台指令
             while (true) {
