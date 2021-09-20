@@ -27,6 +27,7 @@ namespace LQ1Bot.Plugins {
                 if (valll.Msg == text) {
                     MsgRepeat.Add(q, (text, valll.Count + 1));
                     if (valll.Count >= 2 && (new Random()).Next(1, 11) > (valll.Count + 3)) {
+                        valll.Count += 114;
                         await session.SendGroupMessageAsync(q, new PlainMessage(text));
                         return true;
                     }
