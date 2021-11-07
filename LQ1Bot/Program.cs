@@ -41,6 +41,17 @@ namespace LQ1Bot {
                             Environment.Exit(0);
                         }
                         break;
+                    case "-sf":
+                        if (args.Length > 2) {
+                            await Session.ConnectAsync(Options, Secret.QQ);
+                            long qq = long.Parse(args[1]);
+                            string msg = args[2];
+                            Console.WriteLine($"好友QQ号：{qq}\t消息内容：{msg}");
+                            await Session.SendFriendMessageAsync(qq, new PlainMessage(msg));
+                            Console.WriteLine("发送成功");
+                            Environment.Exit(0);
+                        }
+                        break;
                 }
             }
 
