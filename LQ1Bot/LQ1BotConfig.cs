@@ -19,6 +19,7 @@ namespace LQ1Bot {
         public string MiraiSecret { get; set; }
         public int MiraiPort { get; set; }
         public long QQ { get; set; }
+        public string ApexSecret { get; set; }
 
         public string MemeBackupDirectory { get; set; }
 
@@ -38,6 +39,7 @@ namespace LQ1Bot {
                 OsuApiSecret = v.OsuApiSecret;
                 BaiduTranslateAppId = v.BaiduTranslateAppId;
                 BaiduTranslateSecret = v.BaiduTranslateSecret;
+                ApexSecret = v.ApexSecret;
             } else {
                 File.Create("lq1bot.config");
                 //格式化保存json，方便阅读
