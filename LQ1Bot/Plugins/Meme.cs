@@ -37,6 +37,9 @@ namespace LQ1Bot.Plugins {
                     MemeMgr = MemeManager.ReadFromFile("meme.json");
                 } catch (Exception) { }
             }
+            if (!Directory.Exists(Program.Secret.MemeBackupDirectory)) {
+                Directory.CreateDirectory(Program.Secret.MemeBackupDirectory);
+            }
         }
 
         public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {

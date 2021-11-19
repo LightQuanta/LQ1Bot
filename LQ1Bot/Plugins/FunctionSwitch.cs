@@ -20,6 +20,9 @@ namespace LQ1Bot.Plugins {
 
         //TODO: 修复新插件设置不会被保存到已存在的配置文件里的问题
         public FunctionSwitch() {
+            if (!Directory.Exists("plugincfg")) {
+                Directory.CreateDirectory("plugincfg");
+            }
             foreach (var v in Directory.GetFiles("plugincfg")) {
                 if (long.TryParse(v.Substring(0, v.IndexOf('.'))[10..], out long Group)) {
                     var d = new Dictionary<string, bool>();
