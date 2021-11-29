@@ -26,7 +26,7 @@ namespace LQ1Bot.Plugins {
                 MsgRepeat.Remove(q);
                 if (valll.Msg == text) {
                     MsgRepeat.Add(q, (text, valll.Count + 1));
-                    if (valll.Count >= 2 && (new Random()).Next(1, 11) > (valll.Count + 3)) {
+                    if (valll.Count >= 3 && (new Random()).Next(1, 11) > (valll.Count + 3)) {
                         MsgRepeat.Remove(q);
                         MsgRepeat.Add(q, (text, valll.Count + 114));
                         await session.SendGroupMessageAsync(q, new PlainMessage(text));
