@@ -21,7 +21,7 @@ namespace LQ1Bot.Plugins {
             }
             string text = Utils.GetMessageText(e.Chain);
             long q = e.Sender.Group.Id;
-            #region 复读机
+            #region 复读机 
             if (MsgRepeat.TryGetValue(q, out var valll)) {
                 MsgRepeat.Remove(q);
                 if (valll.Msg == text) {

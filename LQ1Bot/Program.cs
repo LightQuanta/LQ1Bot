@@ -20,13 +20,6 @@ namespace LQ1Bot {
 
             await using MiraiHttpSession Session = new MiraiHttpSession();
 
-            //特殊定制功能就不公开了
-            SpecialFunction sf = new SpecialFunction(Secret);
-            Session.AddPlugin(sf);
-
-            PluginController Controller = new PluginController(Session);
-            Controller.LoadPlugins();
-
             //命令行参数发送群消息
             if (args.Length > 0) {
                 switch (args[0]) {
@@ -54,6 +47,13 @@ namespace LQ1Bot {
                         break;
                 }
             }
+            
+            //特殊定制功能就不公开了
+            SpecialFunction sf = new SpecialFunction(Secret);
+            Session.AddPlugin(sf);
+
+            PluginController Controller = new PluginController(Session);
+            Controller.LoadPlugins();
 
             LQ1Bot plugin = new LQ1Bot(Secret);
             Session.AddPlugin(plugin);
