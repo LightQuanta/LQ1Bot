@@ -155,7 +155,7 @@ vtb信息
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
                         MessageBuilder b = new MessageBuilder();
-                        //b.Add(new ImageMessage(null, faceUrl, null));
+                        b.Add(new ImageMessage(null, faceUrl, null));
 
                         if (online == "0") {
                             b.Add(new PlainMessage($@"名称：{userName}
@@ -213,7 +213,7 @@ vtb信息
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
                         MessageBuilder b = new MessageBuilder();
-                        //b.Add(new ImageMessage(null, faceUrl, null));
+                        b.Add(new ImageMessage(null, faceUrl, null));
 
                         b.Add(new PlainMessage($@"{title}
 https://live.bilibili.com/{roomId}
