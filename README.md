@@ -34,17 +34,17 @@ Light_Quanta[1];整活bot
 
 > Microsoft.EntityFrameworkCore.Sqlite
 
-> Mirai-CSharp
+> Mirai.Net
 
 > Newtonsoft.Json
 
 > TinyPinyin.Net
 
-自己部署时记得删除`Program.cs`里和`SpecialFunction`相关的两行代码
+自己部署时记得删除`Program.cs`里和`SpecialFunction`相关的代码
 
 
 ## 开源协议
 
-本程序采用[MIT](https://choosealicense.com/licenses/mit/)协议进行授权
+本程序采用AGPL-3.0协议进行授权
 
   
