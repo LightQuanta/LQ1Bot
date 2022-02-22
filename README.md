@@ -22,7 +22,11 @@ Light_Quanta[1];整活bot
 
 如果你想自己部署此bot的话
 
-此Bot基于[Mirai-CSharp](https://github.com/Executor-Cheng/Mirai-CSharp)
+~~此Bot基于[Mirai-CSharp](https://github.com/Executor-Cheng/Mirai-CSharp)~~
+
+现版本基于[Mirai.Net](https://github.com/SinoAHpx/Mirai.Net)开发
+
+~~问就是Mirai-CSharp新版我没看懂怎么用~~
 
 运行环境为.Net Core 3.1
 
