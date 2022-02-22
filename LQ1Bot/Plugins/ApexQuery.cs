@@ -3,9 +3,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -17,9 +17,9 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Id;
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Id;
             if (text.StartsWith("牢房排名 ") || text.StartsWith("坐牢排名 ")) {
                 string user = text[5..];
                 string url = $"https://api.mozambiquehe.re/bridge?version=5&platform=PC&player={HttpUtility.UrlEncode(user)}&auth={Program.Secret.ApexSecret}";
@@ -29,7 +29,7 @@ namespace LQ1Bot.Plugins {
                     var obj = JObject.Parse(res);
                     if (obj.ContainsKey("Error")) {
                         Console.WriteLine(obj["Error"]);
-                        await session.SendFriendMessageAsync(q, new PlainMessage($"查询Apex分数出错：{obj["Error"]}"));
+                        await MessageManager.SendFriendMessageAsync(q, $"查询Apex分数出错：{obj["Error"]}");
                     } else {
                         string name = obj["global"]["name"].ToString();
                         string level = obj["global"]["level"].ToString();
@@ -48,23 +48,20 @@ namespace LQ1Bot.Plugins {
                         };
                         rank += obj["global"]["rank"]["rankDiv"];
                         string kills = obj["total"]["kills"]["value"].ToString();
-                        await session.SendFriendMessageAsync(q, new PlainMessage($"名称：{name}\n等级：{level}（{percent}%）\n排位得分：{score}\n段位：{rank}\n总击杀：{kills}"));
+                        await MessageManager.SendFriendMessageAsync(q, $"名称：{name}\n等级：{level}（{percent}%）\n排位得分：{score}\n段位：{rank}\n总击杀：{kills}");
                     }
                 } catch (Exception eee) {
                     Console.WriteLine(eee);
-                    await session.SendFriendMessageAsync(q, new PlainMessage("查询Apex分数出错"));
+                    await MessageManager.SendFriendMessageAsync(q, "查询Apex分数出错");
                 }
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
             if (text.StartsWith("牢房排名 ") || text.StartsWith("坐牢排名 ")) {
                 string user = text[5..];
                 string url = $"https://api.mozambiquehe.re/bridge?version=5&platform=PC&player={HttpUtility.UrlEncode(user)}&auth={Program.Secret.ApexSecret}";
@@ -74,7 +71,7 @@ namespace LQ1Bot.Plugins {
                     var obj = JObject.Parse(res);
                     if (obj.ContainsKey("Error")) {
                         Console.WriteLine(obj["Error"]);
-                        await session.SendGroupMessageAsync(q, new PlainMessage($"查询Apex分数出错：{obj["Error"]}"));
+                        await MessageManager.SendGroupMessageAsync(q, $"查询Apex分数出错：{obj["Error"]}");
                     } else {
                         string name = obj["global"]["name"].ToString();
                         string level = obj["global"]["level"].ToString();
@@ -93,11 +90,11 @@ namespace LQ1Bot.Plugins {
                         };
                         rank += obj["global"]["rank"]["rankDiv"];
                         string kills = obj["total"]["kills"]["value"].ToString();
-                        await session.SendGroupMessageAsync(q, new PlainMessage($"名称：{name}\n等级：{level}（{percent}%）\n排位得分：{score}\n段位：{rank}\n总击杀：{kills}"));
+                        await MessageManager.SendGroupMessageAsync(q, $"名称：{name}\n等级：{level}（{percent}%）\n排位得分：{score}\n段位：{rank}\n总击杀：{kills}");
                     }
                 } catch (Exception eee) {
                     Console.WriteLine(eee);
-                    await session.SendGroupMessageAsync(q, new PlainMessage("查询Apex分数出错"));
+                    await MessageManager.SendGroupMessageAsync(q, "查询Apex分数出错");
                 }
                 return true;
             }

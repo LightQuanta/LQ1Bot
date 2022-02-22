@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -45,11 +45,11 @@ namespace LQ1Bot.Plugins {
             }
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
-            if (text == "!createconfig" && (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner || e.Sender.Id == 2224899528)) {
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            if (text == "!createconfig" && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
                 JObject o = new JObject();
-                Config.Remove(e.Sender.Group.Id);
+                Config.Remove(long.Parse(e.Sender.Group.Id));
                 var d = new Dictionary<string, bool>();
                 foreach (var Plugin in PluginController.PluginInstance) {
                     if (Plugin.CanDisable) {
@@ -57,71 +57,71 @@ namespace LQ1Bot.Plugins {
                         d.Add(Plugin.PluginName, true);
                     }
                 }
-                Config.Add(e.Sender.Group.Id, d);
+                Config.Add(long.Parse(e.Sender.Group.Id), d);
                 File.WriteAllText("plugincfg/" + e.Sender.Group.Id + ".json", o.ToString());
-                await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("已创建配置文件"));
+                await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "已创建配置文件");
                 return true;
             }
             if (text.StartsWith("!query ")) {
                 var Name = text[7..];
-                if (Config.TryGetValue(e.Sender.Group.Id, out Dictionary<string, bool> cfg)) {
+                if (Config.TryGetValue(long.Parse(e.Sender.Group.Id), out Dictionary<string, bool> cfg)) {
                     if (cfg.ContainsKey(Name)) {
                         if (cfg.GetValueOrDefault(Name)) {
-                            await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("该功能已启用"));
+                            await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "该功能已启用");
                         } else {
-                            await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("该功能已禁用"));
+                            await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "该功能已禁用");
                         }
                     } else {
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("未发现该功能"));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "未发现该功能");
                     }
                 } else {
-                    InitGroup(e.Sender.Group.Id);
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("该功能已启用"));
+                    InitGroup(long.Parse(e.Sender.Group.Id));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "该功能已启用");
                 }
                 return true;
             }
-            if (text.StartsWith("!enable ") && (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner || e.Sender.Id == 2224899528)) {
+            if (text.StartsWith("!enable ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
                 var Name = text[8..];
-                if (Config.TryGetValue(e.Sender.Group.Id, out Dictionary<string, bool> cfg)) {
+                if (Config.TryGetValue(long.Parse(e.Sender.Group.Id), out Dictionary<string, bool> cfg)) {
                     if (cfg.ContainsKey(Name)) {
                         cfg.Remove(Name);
                         cfg.Add(Name, true);
-                        Save(e.Sender.Group.Id);
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("已启用" + Name));
+                        Save(long.Parse(e.Sender.Group.Id));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "已启用" + Name);
                     } else {
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("未发现该功能"));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "未发现该功能");
                     }
                 } else {
-                    InitGroup(e.Sender.Group.Id);
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("已启用" + Name));
+                    InitGroup(long.Parse(e.Sender.Group.Id));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "已启用" + Name);
                 }
                 return true;
             }
-            if (text.StartsWith("!disable ") && (e.Sender.Permission == GroupPermission.Administrator || e.Sender.Permission == GroupPermission.Owner || e.Sender.Id == 2224899528)) {
+            if (text.StartsWith("!disable ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
                 var Name = text[9..];
-                if (Config.TryGetValue(e.Sender.Group.Id, out Dictionary<string, bool> cfg)) {
+                if (Config.TryGetValue(long.Parse(e.Sender.Group.Id), out Dictionary<string, bool> cfg)) {
                     if (cfg.ContainsKey(Name)) {
                         cfg.Remove(Name);
                         cfg.Add(Name, false);
-                        Save(e.Sender.Group.Id);
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("已禁用" + Name));
+                        Save(long.Parse(e.Sender.Group.Id));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "已禁用" + Name);
                     } else {
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("未发现该功能"));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "未发现该功能");
                     }
                 } else {
-                    InitGroup(e.Sender.Group.Id);
-                    cfg = Config.GetValueOrDefault(e.Sender.Group.Id);
+                    InitGroup(long.Parse(e.Sender.Group.Id));
+                    cfg = Config.GetValueOrDefault(long.Parse(e.Sender.Group.Id));
                     cfg.Remove(Name);
                     cfg.Add(Name, false);
-                    Save(e.Sender.Group.Id);
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("已禁用" + Name));
+                    Save(long.Parse(e.Sender.Group.Id));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "已禁用" + Name);
                 }
                 return true;
             }
             if (text == "!plugins") {
                 List<string> Enabled = new List<string>();
                 List<string> Disabled = new List<string>();
-                if (Config.TryGetValue(e.Sender.Group.Id, out Dictionary<string, bool> cfg)) {
+                if (Config.TryGetValue(long.Parse(e.Sender.Group.Id), out Dictionary<string, bool> cfg)) {
                     foreach (var v in cfg) {
                         if (v.Value) {
                             Enabled.Add(v.Key);
@@ -130,13 +130,13 @@ namespace LQ1Bot.Plugins {
                         }
                     }
                 } else {
-                    InitGroup(e.Sender.Group.Id);
-                    cfg = Config.GetValueOrDefault(e.Sender.Group.Id);
+                    InitGroup(long.Parse(e.Sender.Group.Id));
+                    cfg = Config.GetValueOrDefault(long.Parse(e.Sender.Group.Id));
                     foreach (var v in cfg) {
                         Enabled.Add(v.Key);
                     }
                 }
-                await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("所有可用插件\n已启用：" + (Enabled.Count == 0 ? "无" : string.Join(" ", Enabled)) + "\n已禁用：" + (Disabled.Count == 0 ? "无" : string.Join(" ", Disabled))));
+                await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "所有可用插件\n已启用：" + (Enabled.Count == 0 ? "无" : string.Join(" ", Enabled)) + "\n已禁用：" + (Disabled.Count == 0 ? "无" : string.Join(" ", Disabled)));
                 return true;
             }
             return false;

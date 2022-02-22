@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -14,9 +14,9 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Id;
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Id;
             #region DICE
             if (Regex.IsMatch(text.ToLower().Trim(), @"^dice$|^dice \d+d\d+$")) {
                 int count = 1;
@@ -39,19 +39,16 @@ namespace LQ1Bot.Plugins {
                         res += "," + r.Next(1, max + 1).ToString();
                     }
                 }
-                await session.SendFriendMessageAsync(q, new PlainMessage($"{e.Sender.Name}投出了{res}！"));
+                await MessageManager.SendFriendMessageAsync(q, $"{e.Sender.NickName}投出了{res}！");
                 return true;
             }
             #endregion
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
             #region DICE
             if (Regex.IsMatch(text.ToLower().Trim(), @"^dice$|^dice \d+d\d+$")) {
                 int count = 1;
@@ -74,7 +71,7 @@ namespace LQ1Bot.Plugins {
                         res += "," + r.Next(1, max + 1).ToString();
                     }
                 }
-                await session.SendGroupMessageAsync(q, new PlainMessage($"{e.Sender.Name}投出了{res}！"));
+                await MessageManager.SendGroupMessageAsync(q, $"{e.Sender.Name}投出了{res}！");
                 return true;
             }
             #endregion

@@ -6,9 +6,9 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -20,29 +20,26 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        private readonly Dictionary<long, string> AutoTranslateList = new Dictionary<long, string>();
+        private readonly Dictionary<string, string> AutoTranslateList = new Dictionary<string, string>();
 
         public AutoTranslate() {
-            AutoTranslateList.Add(1057879872, "zh");
+            AutoTranslateList.Add("1057879872", "zh");
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
             #region 自动翻译
             if (Regex.IsMatch(text, @"^autotranslate \d+ \w+")) {
                 if (long.TryParse(text.Split(' ')[1], out long target)) {
                     string TargetLang = text.Split(' ')[2];
                     if (TargetLang == "reset") {
-                        AutoTranslateList.Remove(target);
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"已为QQ号{target}关闭自动翻译"));
+                        AutoTranslateList.Remove(target.ToString());
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id,$"已为QQ号{target}关闭自动翻译");
                         return true;
                     } else {
-                        AutoTranslateList.Remove(target);
-                        AutoTranslateList.Add(target, text.Split(' ')[2]);
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"已为QQ号{target}开启自动翻译"));
+                        AutoTranslateList.Remove(target.ToString());
+                        AutoTranslateList.Add(target.ToString(), text.Split(' ')[2]);
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, $"已为QQ号{target}开启自动翻译");
                     }
                 }
                 return true;
@@ -70,7 +67,7 @@ namespace LQ1Bot.Plugins {
                     JObject o = JObject.Parse(result);
                     if (o["from"].ToString() != Lang) {
                         string TranslationResult = o["trans_result"][0]["dst"].ToString();
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"【{TranslationResult}】"));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id,$"【{TranslationResult}】");
                     }
                 } catch (Exception) { }
                 return false;

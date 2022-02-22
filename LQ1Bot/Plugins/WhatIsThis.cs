@@ -5,9 +5,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -22,14 +22,14 @@ namespace LQ1Bot.Plugins {
 
         private DateTime Cooldown = DateTime.Now;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
 
-            long q = e.Sender.Id;
+            string q = e.Sender.Id;
 
             if (Regex.IsMatch(text, @"^.{1,20}是啥。。。$")) {
                 if (DateTime.Now < Cooldown) {
-                    await session.SendFriendMessageAsync(q, new PlainMessage("功能正在冷却，请稍后再试"));
+                    await MessageManager.SendFriendMessageAsync(q, "功能正在冷却，请稍后再试");
                     return true;
                 }
 
@@ -72,7 +72,7 @@ namespace LQ1Bot.Plugins {
                             //中括号去除
                             def = Regex.Replace(def, @"\[.+(,.+)*:(?<str>.+)\]", "${str}");
 
-                            await session.SendFriendMessageAsync(q, new PlainMessage($"可能的全名：{name}\n释义：{def}\n详细信息：https://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}"));
+                            await MessageManager.SendFriendMessageAsync(q, $"可能的全名：{name}\n释义：{def}\n详细信息：https://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}");
 
                             //添加全局冷却
                             Cooldown = DateTime.Now.AddMinutes(0.5);
@@ -80,34 +80,31 @@ namespace LQ1Bot.Plugins {
                             return true;
                         }
                     }
-                    await session.SendGroupMessageAsync(q, new PlainMessage("未找到解释！"));
+                    await MessageManager.SendGroupMessageAsync(q, "未找到解释！");
                 } catch (WebException eee) {
                     if (((HttpWebResponse) eee.Response).StatusCode == HttpStatusCode.Locked) {
                         Cooldown = DateTime.Now.AddMinutes(5.0);
-                        await session.SendFriendMessageAsync(q, new PlainMessage("请求次数过多，请稍后再试"));
+                        await MessageManager.SendFriendMessageAsync(q, "请求次数过多，请稍后再试");
                         return true;
                     }
 
                     Console.WriteLine(eee.Message);
                     using StreamReader sr = new StreamReader(eee.Response.GetResponseStream());
                     Console.WriteLine(sr.ReadToEnd());
-                    await session.SendFriendMessageAsync(q, new PlainMessage("获取解释出错"));
+                    await MessageManager.SendFriendMessageAsync(q, "获取解释出错");
                 }
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
 
             if (Regex.IsMatch(text, @"^.{1,20}是啥。。。$")) {
                 if (DateTime.Now < Cooldown) {
-                    await session.SendGroupMessageAsync(q, new PlainMessage("功能正在冷却，请稍后再试"));
+                    await MessageManager.SendGroupMessageAsync(q, "功能正在冷却，请稍后再试");
                     return true;
                 }
 
@@ -149,7 +146,7 @@ namespace LQ1Bot.Plugins {
                             //中括号去除
                             def = Regex.Replace(def, @"\[.+(,.+)*:(?<str>.+)\]", "${str}");
 
-                            await session.SendGroupMessageAsync(q, new PlainMessage($"可能的全名：{name}\n释义：{def}\n详细信息：https://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}"));
+                            await MessageManager.SendGroupMessageAsync(q, $"可能的全名：{name}\n释义：{def}\n详细信息：https://jikipedia.com/search?phrase={HttpUtility.UrlEncode(text)}");
 
                             //添加全局冷却
                             Cooldown = DateTime.Now.AddMinutes(0.5);
@@ -157,18 +154,18 @@ namespace LQ1Bot.Plugins {
                             return true;
                         }
                     }
-                    await session.SendGroupMessageAsync(q,new PlainMessage("未找到解释！"));
+                    await MessageManager.SendGroupMessageAsync(q, "未找到解释！");
                 } catch (WebException eee) {
                     if (((HttpWebResponse) eee.Response).StatusCode == HttpStatusCode.Locked) {
                         Cooldown = DateTime.Now.AddMinutes(5.0);
-                        await session.SendGroupMessageAsync(q, new PlainMessage("请求次数过多，请稍后再试"));
+                        await MessageManager.SendGroupMessageAsync(q, "请求次数过多，请稍后再试");
                         return true;
                     }
 
                     Console.WriteLine(eee.Message);
                     using StreamReader sr = new StreamReader(eee.Response.GetResponseStream());
                     Console.WriteLine(sr.ReadToEnd());
-                    await session.SendGroupMessageAsync(q, new PlainMessage("获取解释出错"));
+                    await MessageManager.SendGroupMessageAsync(q, "获取解释出错");
                 }
                 return true;
             }

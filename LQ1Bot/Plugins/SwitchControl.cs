@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -35,39 +35,37 @@ namespace LQ1Bot.Plugins {
             }
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain).ToLower();
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
+            string q = e.Sender.Group.Id;
             #region 启用/禁用控制
             if (text == "!enablebot") {
-                if (e.Sender.Permission == GroupPermission.Administrator ||
-                    e.Sender.Permission == GroupPermission.Owner ||
-                    e.Sender.Id == 2224899528) {
+                if (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member ||
+                    e.Sender.Id == "2224899528") {
                     if (BlacklistGroups == null) {
                         BlacklistGroups = new HashSet<long>();
                     } else {
-                        BlacklistGroups.Remove(q);
+                        BlacklistGroups.Remove(long.Parse(q));
                     }
-                    await session.SendGroupMessageAsync(q, new PlainMessage("已在此群启用bot"));
+                    await MessageManager.SendGroupMessageAsync(q, "已在此群启用bot");
                     File.WriteAllText("blacklist.json", JsonSerializer.Serialize(BlacklistGroups));
                     return true;
                 }
             }
 
-            if (BlacklistGroups?.Contains(q) ?? false) {
+            if (BlacklistGroups?.Contains(long.Parse(q)) ?? false) {
                 return true;
             }
 
             if (text == "!banbot" || text == "!disablebot") {
-                if (e.Sender.Permission == GroupPermission.Administrator ||
-                    e.Sender.Permission == GroupPermission.Owner ||
-                    e.Sender.Id == 2224899528) {
+                if (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member ||
+                    e.Sender.Id == "2224899528") {
                     if (BlacklistGroups == null) {
-                        BlacklistGroups = new HashSet<long>() { q };
+                        BlacklistGroups = new HashSet<long>() { long.Parse(q) };
                     } else {
-                        BlacklistGroups.Add(q);
+                        BlacklistGroups.Add(long.Parse(q));
                     }
-                    await session.SendGroupMessageAsync(q, new PlainMessage("已在此群禁用bot"));
+                    await MessageManager.SendGroupMessageAsync(q, "已在此群禁用bot");
                     File.WriteAllText("blacklist.json", JsonSerializer.Serialize(BlacklistGroups));
                     return true;
                 }

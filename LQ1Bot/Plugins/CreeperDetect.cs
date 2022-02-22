@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using LQ1Bot.Interface;
 using Microsoft.Data.Sqlite;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -14,18 +14,12 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
             if (e.Sender.Name.Length < 10 && CreeperDetector.IsCreeper(e.Sender.Name)) {
-                GroupMemberCardInfo gmc = new GroupMemberCardInfo {
-                    Name = "爬"
-                };
                 try {
-                    await session.ChangeGroupMemberInfoAsync(e.Sender.Id, q, gmc);
+                    await GroupManager.SetMemberInfoAsync(e.Sender.Id, q, "爬");
                 } catch (Exception eeeee) {
                     Console.WriteLine(eeeee.Message);
                 }
@@ -34,9 +28,9 @@ namespace LQ1Bot.Plugins {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine("已禁言用户");
                 Console.ResetColor();
-                await session.SendGroupMessageAsync(q, new PlainMessage("就这？"));
+                await MessageManager.SendGroupMessageAsync(q, "就这？");
 
-                await session.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(5.0));
+                await GroupManager.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(5.0));
 
                 try {
                     SqliteConnection conn = new SqliteConnection("Data Source=chat.db");
@@ -62,17 +56,17 @@ namespace LQ1Bot.Plugins {
             return false;
         }
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            if (CreeperDetector.IsCreeper(Utils.GetMessageText(e.Chain))) {
-                await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage("爬"));
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            if (CreeperDetector.IsCreeper(Utils.GetMessageText(e.MessageChain))) {
+                await MessageManager.SendFriendMessageAsync(e.Sender.Id, "爬");
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> TempMessage(MiraiHttpSession session, ITempMessageEventArgs e) {
-            if (CreeperDetector.IsCreeper(Utils.GetMessageText(e.Chain))) {
-                await session.SendTempMessageAsync(e.Sender.Id, e.Sender.Group.Id, new PlainMessage("爬"));
+        public async Task<bool> TempMessage(TempMessageReceiver e) {
+            if (CreeperDetector.IsCreeper(Utils.GetMessageText(e.MessageChain))) {
+                await MessageManager.SendTempMessageAsync(e.Sender.Id, e.Sender.Group.Id, "爬");
                 return true;
             }
             return false;

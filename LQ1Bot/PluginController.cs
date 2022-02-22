@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mirai_CSharp;
 
 namespace LQ1Bot.Plugins {
 
     internal class PluginController {
-        private readonly MiraiHttpSession session;
+        //private readonly MiraiHttpSession session;
         public static readonly List<PluginBase> PluginInstance = new List<PluginBase>();
 
-        public PluginController(MiraiHttpSession session) {
-            this.session = session;
-        }
+        //public PluginController(MiraiHttpSession session) {
+        //    this.session = session;
+        //}
 
         public void LoadPlugins() {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -24,7 +23,7 @@ namespace LQ1Bot.Plugins {
             }
             foreach (var Plugin in PluginInstance.OrderByDescending(o => o.Priority)) {
                 Console.WriteLine($"[{Plugin.Priority}]\t\t{Plugin.PluginName}");
-                session.AddPlugin(Plugin);
+                //session.AddPlugin(Plugin);
             }
             Console.ResetColor();
         }
@@ -34,7 +33,7 @@ namespace LQ1Bot.Plugins {
             Console.WriteLine("所有已加载插件");
             foreach (var Plugin in PluginInstance.OrderByDescending(o => o.Priority)) {
                 Console.WriteLine($"[{Plugin.Priority}]\t{Plugin.PluginName}");
-                session.AddPlugin(Plugin);
+                //session.AddPlugin(Plugin);
             }
             Console.ResetColor();
         }

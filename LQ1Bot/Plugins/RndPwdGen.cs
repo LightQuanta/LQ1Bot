@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -12,8 +12,8 @@ namespace LQ1Bot.Plugins {
         public override bool CanDisable => true;
         public override string PluginName => "RandomPasswordGenerator";
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain).ToLower();
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
             #region 强随机密码生成器
             if (Regex.IsMatch(text, @"^[!！]pwd(?<len> \d+)?(?<pat> \S+)?$")) {
                 var m = Regex.Match(text, @"^[!！]pwd(?<len> \d+)?(?<pat> \S+)?$");
@@ -23,18 +23,15 @@ namespace LQ1Bot.Plugins {
                 }
                 string pattern = m.Groups["pat"].Value;
                 pattern = pattern.Length < 1 ? "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" : pattern[1..];
-                await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage(Utils.GetStrongRandomString(Length, pattern)));
+                await MessageManager.SendFriendMessageAsync(e.Sender.Id, Utils.GetStrongRandomString(Length, pattern));
                 return true;
             }
             #endregion
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain).ToLower();
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
             #region 强随机密码生成器
             if (Regex.IsMatch(text, @"^[!！]pwd(?<len> \d+)?(?<pat> \S+)?$")) {
                 var m = Regex.Match(text, @"^[!！]pwd(?<len> \d+)?(?<pat> \S+)?$");
@@ -44,7 +41,7 @@ namespace LQ1Bot.Plugins {
                 }
                 string pattern = m.Groups["pat"].Value;
                 pattern = pattern.Length < 1 ? "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" : pattern[1..];
-                await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage(Utils.GetStrongRandomString(Length, pattern)));
+                await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, Utils.GetStrongRandomString(Length, pattern));
                 return true;
             }
             #endregion

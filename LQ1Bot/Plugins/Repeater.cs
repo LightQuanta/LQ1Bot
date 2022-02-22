@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -15,12 +15,12 @@ namespace LQ1Bot.Plugins {
 
         private readonly Dictionary<long, (string Msg, int Count)> MsgRepeat = new Dictionary<long, (string, int)>();
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            //if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
+            //    return false;
+            //}
+            string text = Utils.GetMessageText(e.MessageChain);
+            long q = long.Parse(e.Sender.Id);
             #region 复读机 
             if (MsgRepeat.TryGetValue(q, out var valll)) {
                 MsgRepeat.Remove(q);
@@ -29,7 +29,7 @@ namespace LQ1Bot.Plugins {
                     if (valll.Count >= 3 && (new Random()).Next(1, 11) > (valll.Count + 3)) {
                         MsgRepeat.Remove(q);
                         MsgRepeat.Add(q, (text, valll.Count + 114));
-                        await session.SendGroupMessageAsync(q, new PlainMessage(text));
+                        await MessageManager.SendGroupMessageAsync(q.ToString(), text);
                         return true;
                     }
                 }

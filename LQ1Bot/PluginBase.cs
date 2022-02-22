@@ -1,9 +1,8 @@
 ﻿using System;
-using Mirai_CSharp.Plugin;
 
 namespace LQ1Bot.Plugins {
 
-    internal abstract class PluginBase : IPlugin {
+    internal abstract class PluginBase {
         public abstract int Priority { get; }
 
         public string ConfigPath {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -13,40 +13,37 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain).ToLower();
-            if (text == "picinfo") {
-                List<string> picresult = new List<string>();
-                foreach (var msg in e.Chain) {
-                    if (msg is ImageMessage tempmsg) {
-                        picresult.Add(tempmsg.ImageId + " " + tempmsg.Url + "\n");
-                    }
-                }
-                if (picresult.Count > 0) {
-                    await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage(string.Join("\n", picresult)));
-                }
-                return true;
-            }
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
+            //if (text == "picinfo") {
+            //    List<string> picresult = new List<string>();
+            //    foreach (var msg in e.MessageChain) {
+            //        if (msg is ImageMessage tempmsg) {
+            //            picresult.Add(tempmsg.ImageId + " " + tempmsg.Url + "\n");
+            //        }
+            //    }
+            //    if (picresult.Count > 0) {
+            //        await MessageManager.SendFriendMessageAsync(e.Sender.Id, string.Join("\n", picresult));
+            //    }
+            //    return true;
+            //}
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain).ToLower();
-            if (text == "picinfo") {
-                List<string> picresult = new List<string>();
-                foreach (var msg in e.Chain) {
-                    if (msg is ImageMessage tempmsg) {
-                        picresult.Add(tempmsg.ImageId + " " + tempmsg.Url + "\n");
-                    }
-                }
-                if (picresult.Count > 0) {
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage(string.Join("\n", picresult)));
-                }
-                return true;
-            }
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
+            //if (text == "picinfo") {
+            //    List<string> picresult = new List<string>();
+            //    foreach (var msg in e.MessageChain) {
+            //        if (msg is ImageMessage tempmsg) {
+            //            picresult.Add(tempmsg.ImageId + " " + tempmsg.Url + "\n");
+            //        }
+            //    }
+            //    if (picresult.Count > 0) {
+            //        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, string.Join("\n", picresult));
+            //    }
+            //    return true;
+            //}
             return false;
         }
     }

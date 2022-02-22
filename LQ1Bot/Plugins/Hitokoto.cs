@@ -2,9 +2,9 @@
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -15,9 +15,9 @@ namespace LQ1Bot.Plugins {
         public override string PluginName => "Hitokoto";
         public override bool CanDisable => true;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
             #region 一言
-            if (Utils.GetMessageText(e.Chain) == "一言") {
+            if (Utils.GetMessageText(e.MessageChain) == "一言") {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("一言");
                 Console.ResetColor();
@@ -36,21 +36,18 @@ namespace LQ1Bot.Plugins {
                 string msg = jj["hitokoto"]?.ToString();
                 string from = jj["from_who"]?.ToString();
                 if (from != null && from != "" && from != "null")
-                    await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"{msg}\t——{from}"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id,$"{msg}\t——{from}");
                 else
-                    await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"{msg}"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"{msg}");
                 return true;
             }
             #endregion
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
             #region 一言
-            if (Utils.GetMessageText(e.Chain) == "一言") {
+            if (Utils.GetMessageText(e.MessageChain) == "一言") {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("一言");
                 Console.ResetColor();
@@ -69,9 +66,9 @@ namespace LQ1Bot.Plugins {
                 string msg = jj["hitokoto"]?.ToString();
                 string from = jj["from_who"]?.ToString();
                 if (from != null && from != "" && from != "null")
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"{msg}\t——{from}"));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, $"{msg}\t——{from}");
                 else
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"{msg}"));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, $"{msg}");
                 return true;
             }
             #endregion

@@ -2,9 +2,9 @@
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -15,9 +15,9 @@ namespace LQ1Bot.Plugins {
         public override string PluginName => "OsuQuery";
         public override bool CanDisable => true;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Id;
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Id;
             #region OSU
             if (Regex.IsMatch(text.ToLower(), @"^where .+ (osu|std|mania|ctb|taiko)$|^where .+ ?$")) {
                 OsuAPI.mode = OsuAPI.OSU;
@@ -65,7 +65,7 @@ namespace LQ1Bot.Plugins {
                                     Console.ForegroundColor = ConsoleColor.Yellow;
                                     Console.WriteLine("404 not found");
                                     Console.ResetColor();
-                                    session.SendFriendMessageAsync(q, new PlainMessage("未找到该玩家！"));
+                                    MessageManager.SendFriendMessageAsync(q, "未找到该玩家！");
                                     break;
 
                                 default:
@@ -96,7 +96,7 @@ namespace LQ1Bot.Plugins {
                                         + total_score + "\r总命中次数：\t"
                                         + total_hits + "\r最大连击数：\t"
                                         + maximum_combo;
-                                    session.SendFriendMessageAsync(q, new PlainMessage(info));
+                                    MessageManager.SendFriendMessageAsync(q, info);
                                     Console.WriteLine("Query Ended");
                                     break;
                             }
@@ -114,11 +114,11 @@ namespace LQ1Bot.Plugins {
                                             + "0" + "\r总命中次数：\t"
                                             + "0" + "\r最大连击数：\t"
                                             + "0";
-                                session.SendFriendMessageAsync(q, new PlainMessage(info));
+                                MessageManager.SendFriendMessageAsync(q, info);
                                 Console.WriteLine("Query Ended");
                             } catch (Exception e) {
                                 Console.WriteLine(e.Message);
-                                session.SendFriendMessageAsync(q, new PlainMessage(e.Message));
+                                MessageManager.SendFriendMessageAsync(q, e.Message);
                             }
                         }
                     } catch (Exception e) {
@@ -135,12 +135,9 @@ namespace LQ1Bot.Plugins {
             return await Task.Run(() => false);
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
             #region OSU
             if (Regex.IsMatch(text.ToLower(), @"^where .+ (osu|std|mania|ctb|taiko)$|^where .+ ?$")) {
                 OsuAPI.mode = OsuAPI.OSU;
@@ -187,7 +184,7 @@ namespace LQ1Bot.Plugins {
                                 Console.ForegroundColor = ConsoleColor.Yellow;
                                 Console.WriteLine("404 not found");
                                 Console.ResetColor();
-                                await session.SendGroupMessageAsync(q, new PlainMessage("未找到该玩家！"));
+                                await MessageManager.SendGroupMessageAsync(q, "未找到该玩家！");
                                 break;
 
                             default:
@@ -218,7 +215,7 @@ namespace LQ1Bot.Plugins {
                                     + total_score + "\r总命中次数：\t"
                                     + total_hits + "\r最大连击数：\t"
                                     + maximum_combo;
-                                await session.SendGroupMessageAsync(q, new PlainMessage(info));
+                                await MessageManager.SendGroupMessageAsync(q, info);
                                 Console.WriteLine("Query Ended");
                                 break;
                         }
@@ -236,11 +233,11 @@ namespace LQ1Bot.Plugins {
                                         + "0" + "\r总命中次数：\t"
                                         + "0" + "\r最大连击数：\t"
                                         + "0";
-                            await session.SendGroupMessageAsync(q, new PlainMessage(info));
+                            await MessageManager.SendGroupMessageAsync(q, info);
                             Console.WriteLine("Query Ended");
                         } catch (Exception ee) {
                             Console.WriteLine(ee.Message);
-                            await session.SendGroupMessageAsync(q, new PlainMessage(ee.Message));
+                            await MessageManager.SendGroupMessageAsync(q, ee.Message);
                         }
                     }
                 } catch (Exception ee) {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using LQ1Bot.Interface;
 using Microsoft.Data.Sqlite;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -14,12 +14,9 @@ namespace LQ1Bot.Plugins {
         public override string PluginName => "KusaRecorder";
         public override bool CanDisable => true;
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
             #region 生草榜查询
             switch (text) {
                 #region 今日生草榜读取
@@ -43,9 +40,9 @@ namespace LQ1Bot.Plugins {
                         dr.Close();
 
                         if (list != "") {
-                            await session.SendGroupMessageAsync(q, new PlainMessage(rep + list));
+                            await MessageManager.SendGroupMessageAsync(q, rep + list);
                         } else {
-                            await session.SendGroupMessageAsync(q, new PlainMessage("今天还没人发草！"));
+                            await MessageManager.SendGroupMessageAsync(q, "今天还没人发草！");
                         }
                     } catch (Exception ee) {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -75,9 +72,9 @@ namespace LQ1Bot.Plugins {
                         dr.Close();
 
                         if (list != "") {
-                            await session.SendGroupMessageAsync(q, new PlainMessage(rep + list));
+                            await MessageManager.SendGroupMessageAsync(q, rep + list);
                         } else {
-                            await session.SendGroupMessageAsync(q, new PlainMessage("昨天没人发草！"));
+                            await MessageManager.SendGroupMessageAsync(q, "昨天没人发草！");
                         }
                     } catch (Exception ee) {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -107,9 +104,9 @@ namespace LQ1Bot.Plugins {
                         dr.Close();
 
                         if (list != "") {
-                            await session.SendGroupMessageAsync(q, new PlainMessage(rep + list));
+                            await MessageManager.SendGroupMessageAsync(q, rep + list);
                         } else {
-                            await session.SendGroupMessageAsync(q, new PlainMessage("目前无人发草！"));
+                            await MessageManager.SendGroupMessageAsync(q, "目前无人发草！");
                         }
                     } catch (Exception ee) {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -139,9 +136,9 @@ namespace LQ1Bot.Plugins {
                         dr.Close();
 
                         if (list != "") {
-                            await session.SendGroupMessageAsync(q, new PlainMessage(rep + list));
+                            await MessageManager.SendGroupMessageAsync(q, rep + list);
                         } else {
-                            await session.SendGroupMessageAsync(q, new PlainMessage("今天还没人发草！"));
+                            await MessageManager.SendGroupMessageAsync(q, "今天还没人发草！");
                         }
                     } catch (Exception ee) {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -171,9 +168,9 @@ namespace LQ1Bot.Plugins {
                         dr.Close();
 
                         if (list != "") {
-                            await session.SendGroupMessageAsync(q, new PlainMessage(rep + list));
+                            await MessageManager.SendGroupMessageAsync(q, rep + list);
                         } else {
-                            await session.SendGroupMessageAsync(q, new PlainMessage("昨天没人发草！"));
+                            await MessageManager.SendGroupMessageAsync(q, "昨天没人发草！");
                         }
                     } catch (Exception ee) {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -203,9 +200,9 @@ namespace LQ1Bot.Plugins {
                         dr.Close();
 
                         if (list != "") {
-                            await session.SendGroupMessageAsync(q, new PlainMessage(rep + list));
+                            await MessageManager.SendGroupMessageAsync(q, rep + list);
                         } else {
-                            await session.SendGroupMessageAsync(q, new PlainMessage("目前无人发草！"));
+                            await MessageManager.SendGroupMessageAsync(q, "目前无人发草！");
                         }
                     } catch (Exception ee) {
                         Console.ForegroundColor = ConsoleColor.Red;
@@ -246,11 +243,11 @@ namespace LQ1Bot.Plugins {
                     Console.ResetColor();
 
                     if (count >= 7) {
-                        await session.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(3.0));
+                        await GroupManager.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(3.0));
                         Console.ForegroundColor = ConsoleColor.DarkYellow;
                         Console.WriteLine("已禁言用户");
                         Console.ResetColor();
-                        await session.SendGroupMessageAsync(q, new PlainMessage("禁止刷屏"));
+                        await MessageManager.SendGroupMessageAsync(q, "禁止刷屏");
                     }
                 } catch (Exception ee) {
                     Console.ForegroundColor = ConsoleColor.Red;

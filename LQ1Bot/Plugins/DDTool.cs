@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages;
+using Mirai.Net.Data.Messages.Concretes;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
+using Mirai.Net.Utils.Scaffolds;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -16,11 +19,11 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        private Dictionary<long, DateTime> Cooldown = new Dictionary<long, DateTime>();
+        private Dictionary<string, DateTime> Cooldown = new Dictionary<string, DateTime>();
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain).ToLower();
-            long q = e.Sender.Id;
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
+            string q = e.Sender.Id;
             switch (text) {
                 #region 今天看谁
                 case "今天看谁":
@@ -44,17 +47,16 @@ namespace LQ1Bot.Plugins {
                         string online = RndVtb["online"].ToString();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
-                        MessageBuilder b = new MessageBuilder();
-                        b.Add(new ImageMessage(null, faceUrl, null));
-
+                        ImageMessage b = new ImageMessage();
+                        b.Url = faceUrl;
                         if (online == "0") {
-                            b.Add(new PlainMessage($@"名称：{userName}
+                            await MessageManager.SendFriendMessageAsync(q, b.Append($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
 直播间地址：https://live.bilibili.com/{roomId}"));
                         } else {
-                            b.Add(new PlainMessage($@"名称：{userName}
+                            await MessageManager.SendFriendMessageAsync(q, b.Append($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
@@ -63,10 +65,9 @@ namespace LQ1Bot.Plugins {
 直播间标题：{title}
 直播间地址：https://live.bilibili.com/{roomId}"));
                         }
-                        await session.SendFriendMessageAsync(q, b);
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
-                        await session.SendFriendMessageAsync(q, new PlainMessage("获取vtb信息出错"));
+                        await MessageManager.SendFriendMessageAsync(q, "获取vtb信息出错");
                     }
                     return true;
                 #endregion
@@ -94,10 +95,11 @@ namespace LQ1Bot.Plugins {
                         string online = RndVtb["online"].ToString();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
-                        MessageBuilder b = new MessageBuilder();
-                        b.Add(new ImageMessage(null, faceUrl, null));
 
-                        b.Add(new PlainMessage($@"{title}
+                        ImageMessage b = new ImageMessage();
+                        b.Url = faceUrl;
+
+                        await MessageManager.SendFriendMessageAsync(q, b.Append($@"{title}
 https://live.bilibili.com/{roomId}
 人气：{popularity}
 
@@ -106,10 +108,9 @@ vtb信息
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{uid}"));
-                        await session.SendFriendMessageAsync(q, b);
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
-                        await session.SendFriendMessageAsync(q, new PlainMessage("获取vtb信息出错"));
+                        await MessageManager.SendFriendMessageAsync(q, "获取vtb信息出错");
                     }
                     return true;
                 #endregion
@@ -118,12 +119,9 @@ vtb信息
             }
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain).ToLower();
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain).ToLower();
+            string q = e.Sender.Group.Id;
             switch (text) {
                 #region 今天看谁
                 case "今天看谁":
@@ -154,31 +152,31 @@ vtb信息
                         string online = RndVtb["online"].ToString();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
-                        MessageBuilder b = new MessageBuilder();
-                        b.Add(new ImageMessage(null, faceUrl, null));
+                        ImageMessage b = new ImageMessage();
+                        b.Url = faceUrl;
+                        string id = "";
 
                         if (online == "0") {
-                            b.Add(new PlainMessage($@"名称：{userName}
+                            id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
-直播间地址：https://live.bilibili.com/{roomId}"));
+直播间地址：https://live.bilibili.com/{roomId}")));
                         } else {
-                            b.Add(new PlainMessage($@"名称：{userName}
+                            id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
 
 当前正在直播！
 直播间标题：{title}
-直播间地址：https://live.bilibili.com/{roomId}"));
+直播间地址：https://live.bilibili.com/{roomId}")));
                         }
-                        int id = await session.SendGroupMessageAsync(q, b);
                         Cooldown.Remove(e.Sender.Id);
                         Cooldown.Add(e.Sender.Id, DateTime.Now);
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
-                        await session.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
+                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
                     }
                     return true;
                 #endregion
@@ -212,10 +210,9 @@ vtb信息
                         string online = RndVtb["online"].ToString();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
-                        MessageBuilder b = new MessageBuilder();
-                        b.Add(new ImageMessage(null, faceUrl, null));
-
-                        b.Add(new PlainMessage($@"{title}
+                        ImageMessage b = new ImageMessage();
+                        b.Url = faceUrl;
+                        string id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"{title}
 https://live.bilibili.com/{roomId}
 人气：{popularity}
 
@@ -223,13 +220,12 @@ vtb信息
 名称：{userName}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{uid}"));
-                        int id = await session.SendGroupMessageAsync(q, b);
+主页地址：https://space.bilibili.com/{uid}")));
                         Cooldown.Remove(e.Sender.Id);
                         Cooldown.Add(e.Sender.Id, DateTime.Now);
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
-                        await session.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
+                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
                     }
                     return true;
                 #endregion

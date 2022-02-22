@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
-    class HomoCalc : PluginBase, IGroupMessage, IFriendMessage {
+    class HomoCalc : PluginBase, IGroupMessage,IFriendMessage {
         public override int Priority => 9986;
 
         public override string PluginName => "HomoCalc";
@@ -77,35 +77,32 @@ namespace LQ1Bot.Plugins {
                 return $"{string.Join("+", nums)}";
         }
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Id;
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Id;
 
             if (text.StartsWith("恶臭论证 ")) {
                 text = text[5..];
                 if (int.TryParse(text, out int num)) {
-                    await session.SendFriendMessageAsync(q, new PlainMessage(num + " = " + Num2Homo(num)));
+                    await MessageManager.SendFriendMessageAsync(q, num + " = " + Num2Homo(num));
                 } else {
-                    await session.SendFriendMessageAsync(q, new PlainMessage("在？你管这叫int32整数？"));
+                    await MessageManager.SendFriendMessageAsync(q, "在？你管这叫int32整数？");
                 }
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
 
             if (text.StartsWith("恶臭论证 ")) {
                 text = text[5..];
                 if (int.TryParse(text, out int num)) {
-                    await session.SendGroupMessageAsync(q, new PlainMessage(num + " = " + Num2Homo(num)));
+                    await MessageManager.SendGroupMessageAsync(q, num + " = " + Num2Homo(num));
                 } else {
-                    await session.SendGroupMessageAsync(q, new PlainMessage("在？你管这叫int32整数？"));
+                    await MessageManager.SendGroupMessageAsync(q, "在？你管这叫int32整数？");
                 }
                 return true;
             }

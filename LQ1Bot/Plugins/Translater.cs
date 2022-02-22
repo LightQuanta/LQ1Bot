@@ -5,9 +5,9 @@ using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -18,8 +18,8 @@ namespace LQ1Bot.Plugins {
 
         public override string PluginName => "Translater";
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
             #region 机翻
             if (Regex.IsMatch(text, @"^翻译([a-z]{1,3})? .+$")) {
                 string ToTranslate = text[(text.IndexOf(' ') + 1)..];
@@ -46,15 +46,15 @@ namespace LQ1Bot.Plugins {
                     JObject o = JObject.Parse(result);
 
                     if (o.ContainsKey("error_code") && o["error_code"].ToString() == "58001") {
-                        await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage("翻译语言选择错误"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, "翻译语言选择错误");
                         return true;
                     }
 
                     string TranslationResult = o["trans_result"][0]["dst"].ToString();
-                    await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"翻译结果：{TranslationResult}"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"翻译结果：{TranslationResult}");
                 } catch (Exception eee) {
                     Console.WriteLine(eee.Message);
-                    await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage("获取翻译出错"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, "获取翻译出错");
                 }
                 return true;
             }
@@ -62,11 +62,8 @@ namespace LQ1Bot.Plugins {
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
             #region 机翻
             if (Regex.IsMatch(text, @"^翻译([a-z]{1,3})? .+$")) {
                 string ToTranslate = text[(text.IndexOf(' ') + 1)..];
@@ -93,15 +90,15 @@ namespace LQ1Bot.Plugins {
                     JObject o = JObject.Parse(result);
 
                     if (o.ContainsKey("error_code") && o["error_code"].ToString() == "58001") {
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("翻译语言选择错误"));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "翻译语言选择错误");
                         return true;
                     }
 
                     string TranslationResult = o["trans_result"][0]["dst"].ToString();
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage($"翻译结果：{TranslationResult}"));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, $"翻译结果：{TranslationResult}");
                 } catch (Exception eee) {
                     Console.WriteLine(eee.Message);
-                    await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage("获取翻译出错"));
+                    await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, "获取翻译出错");
                 }
                 return true;
             }

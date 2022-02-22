@@ -2,9 +2,10 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Concretes;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
@@ -16,37 +17,38 @@ namespace LQ1Bot.Plugins {
 
         public override bool CanDisable => true;
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Id;
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Id;
             if (text == "日报") {
                 try {
                     WebClient wc = new WebClient();
                     string res = wc.DownloadString("http://www.tianque.top/d2api/today/");
                     JObject o = JObject.Parse(res);
-                    await session.SendFriendMessageAsync(q, new PlainMessage(o["img_url"].ToString()));
+                    ImageMessage image = new ImageMessage();
+                    image.Url = o["img_url"].ToString();
+                    await MessageManager.SendFriendMessageAsync(q, image);
                 } catch (Exception) {
-                    await session.SendFriendMessageAsync(q, new PlainMessage("获取日报出错"));
+                    await MessageManager.SendFriendMessageAsync(q, "获取日报出错");
                 }
                 return true;
             }
             return false;
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            string text = Utils.GetMessageText(e.Chain);
-            long q = e.Sender.Group.Id;
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Group.Id;
             if (text == "日报") {
                 try {
                     WebClient wc = new WebClient();
                     string res = wc.DownloadString("http://www.tianque.top/d2api/today/");
                     JObject o = JObject.Parse(res);
-                    await session.SendGroupMessageAsync(q, new PlainMessage(o["img_url"].ToString()));
+                    ImageMessage image = new ImageMessage();
+                    image.Url = o["img_url"].ToString();
+                    await MessageManager.SendGroupMessageAsync(q, image);
                 } catch (Exception) {
-                    await session.SendGroupMessageAsync(q, new PlainMessage("获取日报出错"));
+                    await MessageManager.SendGroupMessageAsync(q, "获取日报出错");
                 }
                 return true;
             }

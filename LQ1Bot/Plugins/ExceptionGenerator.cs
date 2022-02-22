@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Mirai_CSharp;
-using Mirai_CSharp.Models;
-using Mirai_CSharp.Plugin.Interfaces;
+using LQ1Bot.Interface;
+using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot.Plugins {
 
@@ -28,8 +28,8 @@ namespace LQ1Bot.Plugins {
             }
         }
 
-        public async Task<bool> FriendMessage(MiraiHttpSession session, IFriendMessageEventArgs e) {
-            switch (Utils.GetMessageText(e.Chain)) {
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            switch (Utils.GetMessageText(e.MessageChain)) {
                 #region 手动报错
                 case "来点bug":
                 case "来点异常":
@@ -39,7 +39,7 @@ namespace LQ1Bot.Plugins {
                     try {
                         throw ((Exception) Activator.CreateInstance(ExceptionType));
                     } catch (Exception eee) {
-                        await session.SendFriendMessageAsync(e.Sender.Id, new PlainMessage(eee.ToString()));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, eee.ToString());
                     }
                     return true;
                 #endregion
@@ -48,11 +48,8 @@ namespace LQ1Bot.Plugins {
             }
         }
 
-        public async Task<bool> GroupMessage(MiraiHttpSession session, IGroupMessageEventArgs e) {
-            if (!FunctionSwitch.IsEnabled(e.Sender.Group.Id, PluginName)) {
-                return false;
-            }
-            switch (Utils.GetMessageText(e.Chain)) {
+        public async Task<bool> GroupMessage(GroupMessageReceiver e) {
+            switch (Utils.GetMessageText(e.MessageChain)) {
                 #region 手动报错
                 case "来点bug":
                 case "来点异常":
@@ -62,7 +59,7 @@ namespace LQ1Bot.Plugins {
                     try {
                         throw ((Exception) Activator.CreateInstance(ExceptionType));
                     } catch (Exception eee) {
-                        await session.SendGroupMessageAsync(e.Sender.Group.Id, new PlainMessage(eee.ToString()));
+                        await MessageManager.SendGroupMessageAsync(e.Sender.Group.Id, eee.ToString());
                     }
                     return true;
                 #endregion

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Mirai_CSharp.Models;
+using Mirai.Net.Data.Messages;
+using Mirai.Net.Data.Messages.Concretes;
 
 namespace LQ1Bot {
 
@@ -26,27 +27,25 @@ namespace LQ1Bot {
             return SubTypeList.ToList();
         }
 
-        public static string GetMessageText(IMessageBase[] msg) {
+        public static string GetMessageText(IEnumerable<MessageBase> msg) {
             string text = "";
             foreach (var v in msg) {
                 //text += "\n" + v.Type;
                 switch (v.Type) {
-                    case "Plain":
-                        text += ((PlainMessage) v).Message;
+                    case Messages.Plain:
+                        text += ((PlainMessage) v).Text;
                         break;
 
-                    case "At":
+                    case Messages.At:
                         AtMessage am = (AtMessage) v;
-                        if (am.Target == 1727089824 || am.Target == 2224899528)
-                            text += "Light_Quanta";
                         text += am.Display;
                         break;
-                    //case "Quote":
-                    //    QuoteMessage qm = (QuoteMessage) v;
-                    //    var oc = qm.OriginChain;
-                    //    //text += qm.;
-                    //    break;
-                    case "Source":
+                        //case "Quote":
+                        //    QuoteMessage qm = (QuoteMessage) v;
+                        //    var oc = qm.OriginChain;
+                        //    //text += qm.;
+                        //    break;
+                        //case "Source":
                         //SourceMessage sm = (SourceMessage) v;
                         break;
                 }
