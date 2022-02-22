@@ -110,6 +110,19 @@ namespace LQ1Bot {
                     }
                 });
 
+            bot.DisconnectionHappened
+                .Subscribe(async status => {
+                    Console.WriteLine("掉线重连中");
+                    while (true) {
+                        try {
+                            await bot.LaunchAsync();
+                            break;
+                        } catch (Exception e) {
+                            Console.Error.WriteLine(e.Message);
+                        }
+                    }
+                    Console.WriteLine("重连成功");
+                });
 
             //控制台指令
             while (true) {
