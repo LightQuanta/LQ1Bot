@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using LQ1Bot.Interface;
 using LQ1Bot.Plugins;
@@ -67,12 +68,36 @@ namespace LQ1Bot {
                 .OfType<GroupMessageReceiver>()
                 .Subscribe(async receiver => {
                     if (!await sf.GroupMessage(receiver)) {
-                        bool result = false;
-                        foreach (var v in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
-                            if (v is IGroupMessage) {
-                                if (!v.CanDisable || FunctionSwitch.IsEnabled(long.Parse(receiver.Sender.Group.Id), v.PluginName)) {
+                        new Thread(new ThreadStart(async () => {
+                            bool result = false;
+                            foreach (var v in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
+                                if (v is IGroupMessage) {
+                                    if (!v.CanDisable || FunctionSwitch.IsEnabled(long.Parse(receiver.Sender.Group.Id), v.PluginName)) {
+                                        try {
+                                            result = await ((IGroupMessage) v).GroupMessage(receiver);
+                                            if (result) {
+                                                break;
+                                            }
+                                        } catch (Exception e) {
+                                            Console.Error.WriteLine(e);
+                                        }
+                                    }
+                                }
+                            }
+                        })).Start();
+                    }
+                });
+
+            bot.MessageReceived
+                .OfType<FriendMessageReceiver>()
+                .Subscribe(async receiver => {
+                    if (!await sf.FriendMessage(receiver)) {
+                        new Thread(new ThreadStart(async () => {
+                            bool result = false;
+                            foreach (var v in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
+                                if (v is IFriendMessage) {
                                     try {
-                                        result = await ((IGroupMessage) v).GroupMessage(receiver);
+                                        result = await ((IFriendMessage) v).FriendMessage(receiver);
                                         if (result) {
                                             break;
                                         }
@@ -81,27 +106,7 @@ namespace LQ1Bot {
                                     }
                                 }
                             }
-                        }
-                    }
-                });
-
-            bot.MessageReceived
-                .OfType<FriendMessageReceiver>()
-                .Subscribe(async receiver => {
-                    if (!await sf.FriendMessage(receiver)) {
-                        bool result = false;
-                        foreach (var v in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
-                            if (v is IFriendMessage) {
-                                try {
-                                    result = await ((IFriendMessage) v).FriendMessage(receiver);
-                                    if (result) {
-                                        break;
-                                    }
-                                } catch (Exception e) {
-                                    Console.Error.WriteLine(e);
-                                }
-                            }
-                        }
+                        })).Start();
                     }
                 });
 
