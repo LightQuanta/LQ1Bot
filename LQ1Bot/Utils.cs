@@ -47,7 +47,6 @@ namespace LQ1Bot {
                         //    break;
                         //case "Source":
                         //SourceMessage sm = (SourceMessage) v;
-                        break;
                 }
             }
             return text;

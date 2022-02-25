@@ -483,34 +483,34 @@ namespace LQ1Bot.Plugins {
                 } catch (Exception) { }
                 return true;
             }
-            //if (text == "uploadpic") {
-            //    if (e.MessageChain.Length == 3 && (e.MessageChain[2] is ImageMessage im)) {
-            //        string FileName = im.ImageId;
-            //        if (!File.Exists("/recordings/botpicture/" + FileName + ".png")) {
-            //            if (MemeMgr.IsAdmin(e.Sender.Id)) {
-            //                (new Thread(new ThreadStart(async () => {
-            //                    try {
-            //                        WebRequest imgRequest = WebRequest.Create(im.Url);
-            //                        HttpWebResponse res = (HttpWebResponse) imgRequest.GetResponse();
-            //                        Image downImage = Image.FromStream(res.GetResponseStream());
-            //                        downImage.Save("/recordings/botpicture/" + FileName);
-            //                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"上传图片{FileName}成功！"));
-            //                        Console.WriteLine(im.ImageId);
-            //                    } catch (Exception e) {
-            //                        Console.WriteLine(e.Message);
-            //                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage("上传图片出错"));
-            //                    }
-            //                }))).Start();
-            //            } else {
-            //                await MessageManager.SendFriendMessageAsync(2224899528, new PlainMessage($"来自{e.Sender.Group.Name}的{e.Sender.NickName}({e.Sender.Id})的图片上传请求\n图片名称：{FileName}"), new ImageMessage(im.ImageId, im.Url, null));
-            //                await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"已将建议转发给Light_Quanta\n图片名称：{FileName}"));
-            //            }
-            //        } else {
-            //            await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"该图片{FileName}已存在！"));
-            //        }
-            //    }
-            //    return true;
-            //}
+            if (text == "uploadpic") {
+                if (e.MessageChain.Count() == 3 && (e.MessageChain.ToArray()[2] is ImageMessage im)) {
+                    string FileName = im.ImageId;
+                    if (!File.Exists("/recordings/botpicture/" + FileName + ".png")) {
+                        if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                            (new Thread(new ThreadStart(async () => {
+                                try {
+                                    WebRequest imgRequest = WebRequest.Create(im.Url);
+                                    HttpWebResponse res = (HttpWebResponse) imgRequest.GetResponse();
+                                    Image downImage = Image.FromStream(res.GetResponseStream());
+                                    downImage.Save("/recordings/botpicture/" + FileName);
+                                    await MessageManager.SendGroupMessageAsync(q, $"上传图片{FileName}成功！");
+                                    Console.WriteLine(im.ImageId);
+                                } catch (Exception e) {
+                                    Console.WriteLine(e.Message);
+                                    await MessageManager.SendGroupMessageAsync(q, "上传图片出错");
+                                }
+                            }))).Start();
+                        } else {
+                            await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的图片上传请求\n图片名称：{FileName}"), new ImageMessage() { ImageId = im.ImageId, Url = im.Url });
+                            await MessageManager.SendGroupMessageAsync(q, $"已将建议转发给Light_Quanta\n图片名称：{FileName}");
+                        }
+                    } else {
+                        await MessageManager.SendGroupMessageAsync(q, $"该图片{FileName}已存在！");
+                    }
+                }
+                return true;
+            }
             #endregion
             return false;
         }

@@ -95,9 +95,9 @@ namespace LQ1Bot {
                         new Thread(new ThreadStart(async () => {
                             bool result = false;
                             foreach (var v in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
-                                if (v is IFriendMessage) {
+                                if (v is IFriendMessage message) {
                                     try {
-                                        result = await ((IFriendMessage) v).FriendMessage(receiver);
+                                        result = await message.FriendMessage(receiver);
                                         if (result) {
                                             break;
                                         }
