@@ -9,7 +9,7 @@ using Mirai.Net.Sessions.Http.Managers;
 
 namespace LQ1Bot {
 
-    partial class LQ1Bot : IFriendMessage {
+    partial class LQ1Bot {
         private static LQ1BotConfig Secret;
 
         //public async Task<bool> Disconnected(MiraiHttpSession session, IDisconnectedEventArgs e) {
@@ -51,19 +51,5 @@ namespace LQ1Bot {
                     RequestManager.HandleNewInvitationRequestedAsync(receiver, Mirai.Net.Data.Shared.NewInvitationRequestHandlers.Approve, "");
                 });
         }
-
-        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
-            //string text = Utils.GetMessageText(e.MessageChain);
-            //if (e.Sender.Id != 2224899528) {
-            //    return true;
-            //} else {
-            //    if (text.StartsWith("gm")) {
-            //        await MessageManager.SendGroupMessageAsync(235107078, new PlainMessage(text.Substring(2)));
-            //    }
-            //    return true;
-            //}
-            return false;
-        }
-
     }
 }
