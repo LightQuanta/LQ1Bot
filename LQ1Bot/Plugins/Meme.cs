@@ -104,7 +104,7 @@ namespace LQ1Bot.Plugins {
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#.+")) {
                 if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
                     string temp = text[8..];
-                    string key = temp.Split('#')[0];
+                    string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1];
                     HashSet<string> rep = val.Split("|").ToHashSet();
 
@@ -384,7 +384,7 @@ namespace LQ1Bot.Plugins {
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#.+")) {
                 if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
                     string temp = text[8..];
-                    string key = temp.Split('#')[0];
+                    string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1];
                     HashSet<string> rep = val.Split("|").ToHashSet();
 
@@ -402,7 +402,7 @@ namespace LQ1Bot.Plugins {
             if (Regex.IsMatch(text.ToLower(), @"^addalias .+#.+")) {
                 if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
                     string temp = text[9..];
-                    string key = temp.Split('#')[0];
+                    string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1];
                     HashSet<string> rep = val.Split("|").ToHashSet();
                     Console.WriteLine(key);
