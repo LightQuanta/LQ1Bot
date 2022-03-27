@@ -203,6 +203,61 @@ namespace LQ1Bot.Plugins {
                 } catch (Exception) { }
                 return true;
             }
+            if (text.StartsWith("findmeme ")) {
+                string temp = text[9..];
+                if (temp.Length > 0) {
+                    if (temp.Contains("#")) {
+                        string key = temp.Split('#')[0].ToLower();
+                        string val = temp.Split('#')[1];
+                        if (MemeMgr.HasReply(key)) {
+                            string meme = MemeMgr.GetMeme(key);
+                            List<string> rep = new List<string>();
+                            foreach (var v in meme.Split("|")) {
+                                if (v.Contains(val)) {
+                                    rep.Add(v);
+                                }
+                            }
+                            if (rep.Count() > 0) {
+                                await MessageManager.SendFriendMessageAsync(q, "查找到的回复：\n" + string.Join("\n", rep));
+                            } else {
+                                await MessageManager.SendFriendMessageAsync(q, "未查找到指定的回复内容！");
+                            }
+                        } else {
+                            await MessageManager.SendFriendMessageAsync(q, "未查找到该关键词！");
+                        }
+                    } else {
+                        List<MemeBase> memes = new List<MemeBase>();
+                        foreach (var v in MemeMgr.Memes) {
+                            if (v.Name.Contains(temp)) {
+                                memes.Add(v);
+                            } else {
+                                if (v.Alias != null) {
+                                    foreach (var vv in v.Alias) {
+                                        if (vv.Contains(temp)) {
+                                            memes.Add(v);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        List<string> tmp = new List<string>();
+                        foreach (var vvv in memes) {
+                            string t = vvv.Name;
+                            if (vvv.Alias != null && vvv.Alias.Count() > 0) {
+                                t += "(别名：" + string.Join(",", vvv.Alias) + ")";
+                            }
+                            tmp.Add(t);
+                        }
+
+                        if (memes.Count() > 0) {
+                            await MessageManager.SendFriendMessageAsync(q, "查找到的关键词：\n" + string.Join("\n", tmp));
+                        } else {
+                            await MessageManager.SendFriendMessageAsync(q, "未查找到指定的关键词！");
+                        }
+                    }
+                }
+                return true;
+            }
             #endregion
             #region meme回复
             if (Rep.TryGetValue(q, out (string, string) valll)) {
@@ -210,7 +265,7 @@ namespace LQ1Bot.Plugins {
                     if (valll.Item2.StartsWith("[picture]") && valll.Item2.Length > 9) {
                         ImageMessage image = new ImageMessage();
                         image.Url = $"/recordings/botpicture/{valll.Item2[9..]}";
-                        await MessageManager.SendGroupMessageAsync(q, image);
+                        await MessageManager.SendFriendMessageAsync(q, image);
                         //await session.SendImageToFriendAsync(q, new string[] {  });
                     } else {
                         string n = await MessageManager.SendFriendMessageAsync(q, valll.Item2);
@@ -219,13 +274,6 @@ namespace LQ1Bot.Plugins {
                     return true;
                 }
             }
-            //if (text == "来点hiiro" || text == "來點hiiro") {
-            //    LastMeme.Remove(q);
-            //    LastMeme.Add(q, text);
-            //    string url = @"https://cdn.jsdelivr.net/gh/blacktunes/hiiro-button@master/public/voices/" + System.Web.HttpUtility.UrlEncode(Utils.RandomMsg(HiiroVoiceList), Encoding.Default);
-            //    await MessageManager.SendFriendMessageAsync(q, new VoiceMessage(null, url, null));
-            //    return true;
-            //}
             if (MemeMgr.HasReply(text)) {
                 var rep = MemeMgr.GetReply(text, long.Parse(q));
                 if (rep != null) {
@@ -234,7 +282,7 @@ namespace LQ1Bot.Plugins {
                     if (rep.StartsWith("[picture]") && rep.Length > 9) {
                         ImageMessage image = new ImageMessage();
                         image.Path = $"/recordings/botpicture/{ rep[9..]}";
-                        await MessageManager.SendGroupMessageAsync(q, image);
+                        await MessageManager.SendFriendMessageAsync(q, image);
                         //await session.SendImageToFriendAsync(q, new string[] {  });
                     } else {
                         string n = await MessageManager.SendFriendMessageAsync(q, new PlainMessage(rep));
@@ -246,6 +294,7 @@ namespace LQ1Bot.Plugins {
                 await MessageManager.SendFriendMessageAsync(q, new PlainMessage(Guid.NewGuid().ToString()));
                 return true;
             }
+
             //if (text.ToLower() == "来点原神kfc") {
             //    LastMeme.Remove(q);
             //    LastMeme.Add(q, text);
@@ -281,8 +330,9 @@ namespace LQ1Bot.Plugins {
             if (Rep.TryGetValue(e.Sender.Id, out (string, string) valll)) {
                 if (text == valll.Item1) {
                     if (valll.Item2.StartsWith("[picture]") && valll.Item2.Length > 9) {
-                        var image = new ImageMessage();
-                        image.Path = $"/recordings/botpicture/{valll.Item2[9..]}";
+                        var image = new ImageMessage {
+                            Path = $"/recordings/botpicture/{valll.Item2[9..]}"
+                        };
                         await MessageManager.SendGroupMessageAsync(q, image);
                         //await session.SendImageToGroupAsync(q, new string[] { $"http://127.0.0.1:23333/botpicture/{valll.Item2[9..]}" });
                     } else {
@@ -304,16 +354,6 @@ namespace LQ1Bot.Plugins {
                 if (LastMeme.TryGetValue(q, out string last)) {
                     text = last;
                 }
-            }
-            if (text == "来点hiiro" || text == "來點hiiro") {
-                LastMeme.Remove(q);
-                LastMeme.Add(q, text);
-                string url = @"https://cdn.jsdelivr.net/gh/blacktunes/hiiro-button@master/public/voices/" + System.Web.HttpUtility.UrlEncode(Utils.RandomMsg(HiiroVoiceList), Encoding.Default);
-
-                //VoiceMessage vm = new VoiceMessage();
-                //vm.
-                //await MessageManager.SendGroupMessageAsync(q, new VoiceMessage(null, url, null));
-                return true;
             }
             if (MemeMgr.HasReply(text)) {
                 var rep = MemeMgr.GetReply(text, long.Parse(q));
@@ -507,6 +547,61 @@ namespace LQ1Bot.Plugins {
                         }
                     } else {
                         await MessageManager.SendGroupMessageAsync(q, $"该图片{FileName}已存在！");
+                    }
+                }
+                return true;
+            }
+            if (text.StartsWith("findmeme ")) {
+                string temp = text[9..];
+                if (temp.Length > 0) {
+                    if (temp.Contains("#")) {
+                        string key = temp.Split('#')[0].ToLower();
+                        string val = temp.Split('#')[1];
+                        if (MemeMgr.HasReply(key)) {
+                            string meme = MemeMgr.GetMeme(key);
+                            List<string> rep = new List<string>();
+                            foreach (var v in meme.Split("|")) {
+                                if (v.Contains(val)) {
+                                    rep.Add(v);
+                                }
+                            }
+                            if (rep.Count() > 0) {
+                                await MessageManager.SendGroupMessageAsync(q, "查找到的回复：\n" + string.Join("\n", rep));
+                            } else {
+                                await MessageManager.SendGroupMessageAsync(q, "未查找到指定的回复内容！");
+                            }
+                        } else {
+                            await MessageManager.SendGroupMessageAsync(q, "未查找到该关键词！");
+                        }
+                    } else {
+                        List<MemeBase> memes = new List<MemeBase>();
+                        foreach (var v in MemeMgr.Memes) {
+                            if (v.Name.Contains(temp)) {
+                                memes.Add(v);
+                            } else {
+                                if (v.Alias != null) {
+                                    foreach (var vv in v.Alias) {
+                                        if (vv.Contains(temp)) {
+                                            memes.Add(v);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        List<string> tmp = new List<string>();
+                        foreach (var vvv in memes) {
+                            string t = vvv.Name;
+                            if (vvv.Alias != null && vvv.Alias.Count() > 0) {
+                                t += "(别名：" + string.Join(",", vvv.Alias) + ")";
+                            }
+                            tmp.Add(t);
+                        }
+
+                        if (memes.Count() > 0) {
+                            await MessageManager.SendGroupMessageAsync(q, "查找到的关键词：\n" + string.Join("\n", tmp));
+                        } else {
+                            await MessageManager.SendGroupMessageAsync(q, "未查找到指定的关键词！");
+                        }
                     }
                 }
                 return true;
