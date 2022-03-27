@@ -213,7 +213,7 @@ namespace LQ1Bot.Plugins {
                             string meme = MemeMgr.GetMeme(key);
                             List<string> rep = new List<string>();
                             foreach (var v in meme.Split("|")) {
-                                if (v.Contains(val)) {
+                                if (v.Contains(val) && rep.Count() < 8) {
                                     rep.Add(v);
                                 }
                             }
@@ -228,12 +228,12 @@ namespace LQ1Bot.Plugins {
                     } else {
                         List<MemeBase> memes = new List<MemeBase>();
                         foreach (var v in MemeMgr.Memes) {
-                            if (v.Name.Contains(temp)) {
+                            if (v.Name.Contains(temp) && memes.Count() < 8) {
                                 memes.Add(v);
                             } else {
                                 if (v.Alias != null) {
                                     foreach (var vv in v.Alias) {
-                                        if (vv.Contains(temp)) {
+                                        if (vv.Contains(temp) && memes.Count() < 8 && !memes.Contains(v)) {
                                             memes.Add(v);
                                         }
                                     }
@@ -561,7 +561,7 @@ namespace LQ1Bot.Plugins {
                             string meme = MemeMgr.GetMeme(key);
                             List<string> rep = new List<string>();
                             foreach (var v in meme.Split("|")) {
-                                if (v.Contains(val)) {
+                                if (v.Contains(val) && rep.Count() < 8) {
                                     rep.Add(v);
                                 }
                             }
@@ -576,12 +576,12 @@ namespace LQ1Bot.Plugins {
                     } else {
                         List<MemeBase> memes = new List<MemeBase>();
                         foreach (var v in MemeMgr.Memes) {
-                            if (v.Name.Contains(temp)) {
+                            if (v.Name.Contains(temp) && memes.Count() < 8) {
                                 memes.Add(v);
                             } else {
                                 if (v.Alias != null) {
                                     foreach (var vv in v.Alias) {
-                                        if (vv.Contains(temp)) {
+                                        if (vv.Contains(temp) && memes.Count() < 8 && !memes.Contains(v)) {
                                             memes.Add(v);
                                         }
                                     }
