@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using LQ1Bot.Interface;
 using Mirai.Net.Data.Messages.Receivers;
@@ -17,6 +16,8 @@ namespace LQ1Bot.Plugins {
         public override bool CanDisable => false;
 
         public static Dictionary<long, Dictionary<string, bool>> Config = new Dictionary<long, Dictionary<string, bool>>();
+
+        private readonly HashSet<long> Admins = new HashSet<long>();
 
         //TODO: 修复新插件设置不会被保存到已存在的配置文件里的问题
         public FunctionSwitch() {
@@ -43,11 +44,21 @@ namespace LQ1Bot.Plugins {
                     Config.Add(Group, d);
                 }
             }
+            if (File.Exists("plugincfg/admin.txt")) {
+                try {
+                    foreach (string v2 in File.ReadAllText("plugincfg/admin.txt").Split("|")) {
+                        Admins.Add(long.Parse(v2));
+                    }
+                } catch (Exception) {
+                }
+            } else {
+                File.Create("plugincfg/admin.txt");
+            }
         }
 
         public async Task<bool> GroupMessage(GroupMessageReceiver e) {
             string text = Utils.GetMessageText(e.MessageChain);
-            if (text == "!createconfig" && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
+            if (text == "!createconfig" && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || Admins.Contains(long.Parse(e.Sender.Id)))) {
                 JObject o = new JObject();
                 Config.Remove(long.Parse(e.Sender.Group.Id));
                 var d = new Dictionary<string, bool>();
@@ -80,7 +91,7 @@ namespace LQ1Bot.Plugins {
                 }
                 return true;
             }
-            if (text.StartsWith("!enable ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
+            if (text.StartsWith("!enable ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || Admins.Contains(long.Parse(e.Sender.Id)))) {
                 var Name = text[8..];
                 if (Config.TryGetValue(long.Parse(e.Sender.Group.Id), out Dictionary<string, bool> cfg)) {
                     if (cfg.ContainsKey(Name)) {
@@ -97,7 +108,7 @@ namespace LQ1Bot.Plugins {
                 }
                 return true;
             }
-            if (text.StartsWith("!disable ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
+            if (text.StartsWith("!disable ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || Admins.Contains(long.Parse(e.Sender.Id)))) {
                 var Name = text[9..];
                 if (Config.TryGetValue(long.Parse(e.Sender.Group.Id), out Dictionary<string, bool> cfg)) {
                     if (cfg.ContainsKey(Name)) {
