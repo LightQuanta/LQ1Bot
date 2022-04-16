@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using LQ1Bot.Interface;
 using Mirai.Net.Data.Messages.Receivers;
@@ -24,6 +25,7 @@ namespace LQ1Bot.Plugins {
             if (!Directory.Exists("plugincfg")) {
                 Directory.CreateDirectory("plugincfg");
             }
+
             foreach (var v in Directory.GetFiles("plugincfg")) {
                 if (long.TryParse(v.Substring(0, v.IndexOf('.'))[10..], out long Group)) {
                     var d = new Dictionary<string, bool>();
@@ -32,6 +34,22 @@ namespace LQ1Bot.Plugins {
                     foreach (var oo in o) {
                         d.Add(oo.Key, bool.Parse(oo.Value.ToString()));
                     }
+                    foreach (var Plugin in PluginController.PluginInstance) {
+                        if (Plugin.CanDisable && !o.ContainsKey(Plugin.PluginName)) {
+                            o.Add(Plugin.PluginName, true);
+                            d.Add(Plugin.PluginName, true);
+                        }
+                    }
+
+                    //if (Group == 569901561) {
+                    //    MessageManager.SendGroupMessageAsync(Group.ToString(), o.ToString());
+
+                    //    string tmp = "";
+                    //    foreach (var Plugin in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
+                    //        tmp += $"[{Plugin.Priority}]\t{Plugin.PluginName}\n";
+                    //    }
+                    //    //MessageManager.SendGroupMessageAsync(Group.ToString(), tmp);
+                    //}
                     //foreach (var Plugin in PluginController.PluginInstance.OrderByDescending(o => o.Priority)) {
                     //    if (Plugin.CanDisable) {
                     //        if (!d.ContainsKey(Plugin.PluginName)) {
