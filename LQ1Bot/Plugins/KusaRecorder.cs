@@ -219,16 +219,8 @@ namespace LQ1Bot.Plugins {
                 try {
                     SqliteConnection conn = new SqliteConnection("Data Source=chat.db");
                     conn.Open();
-                    SqliteCommand cmd = new SqliteCommand("", conn) {
-                        CommandText = $"insert into main values (strftime('%Y-%m-%d %H:%M:%f','now','localtime'),@nickname,{e.Sender.Id},{q},'cao')"
-                    };
-                    cmd.Parameters.AddWithValue("@nickname", e.Sender.Name);
-
-                    SqliteDataReader dr = cmd.ExecuteReader();
-                    dr.Close();
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine("成功写入草，用户名：\t" + e.Sender.Name);
-
+                    SqliteCommand cmd = new SqliteCommand("", conn);
+                    SqliteDataReader dr;
                     cmd.CommandText = "select count(*) from main where qq=" + e.Sender.Id + " and time>=datetime('now','localtime','-1 minutes') and type='cao' and fromgroup=" + q;
                     dr = cmd.ExecuteReader();
 
@@ -248,6 +240,16 @@ namespace LQ1Bot.Plugins {
                         Console.WriteLine("已禁言用户");
                         Console.ResetColor();
                         await MessageManager.SendGroupMessageAsync(q, "禁止刷屏");
+                    } else {
+                        cmd = new SqliteCommand("", conn) {
+                            CommandText = $"insert into main values (strftime('%Y-%m-%d %H:%M:%f','now','localtime'),@nickname,{e.Sender.Id},{q},'cao')"
+                        };
+                        cmd.Parameters.AddWithValue("@nickname", e.Sender.Name);
+
+                        dr = cmd.ExecuteReader();
+                        dr.Close();
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
+                        Console.WriteLine("成功写入草，用户名：\t" + e.Sender.Name);
                     }
                 } catch (Exception ee) {
                     Console.ForegroundColor = ConsoleColor.Red;
