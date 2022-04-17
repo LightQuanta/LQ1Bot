@@ -228,8 +228,6 @@ namespace LQ1Bot.Plugins {
                     while (dr.Read()) {
                         count = int.Parse(dr["count(*)"].ToString());
                     }
-                    dr.Close();
-                    conn.Close();
 
                     Console.WriteLine("一分钟内生草次数：\t" + count.ToString());
                     Console.ResetColor();
@@ -251,6 +249,8 @@ namespace LQ1Bot.Plugins {
                         Console.ForegroundColor = ConsoleColor.DarkGreen;
                         Console.WriteLine("成功写入草，用户名：\t" + e.Sender.Name);
                     }
+                    dr.Close();
+                    conn.Close();
                 } catch (Exception ee) {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("写入数据库出现错误\n" + ee.Message);
