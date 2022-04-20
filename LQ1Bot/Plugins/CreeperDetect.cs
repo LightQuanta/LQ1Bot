@@ -29,9 +29,9 @@ namespace LQ1Bot.Plugins {
                 Console.WriteLine("已禁言用户");
                 Console.ResetColor();
                 await MessageManager.SendGroupMessageAsync(q, "就这？");
-
-                await GroupManager.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(5.0));
-
+                try {
+                    await GroupManager.MuteAsync(e.Sender.Id, q, TimeSpan.FromMinutes(5.0));
+                } catch (Exception) { }
                 try {
                     SqliteConnection conn = new SqliteConnection("Data Source=chat.db");
                     conn.Open();
