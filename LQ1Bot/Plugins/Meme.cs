@@ -24,8 +24,6 @@ namespace LQ1Bot.Plugins {
 
         private MemeManager MemeMgr;
 
-        private readonly Dictionary<string, string> LastMeme = new Dictionary<string, string>();
-
         private readonly Dictionary<string, (string, string)> Rep = new Dictionary<string, (string, string)>();
 
         public Meme() {
@@ -272,8 +270,6 @@ namespace LQ1Bot.Plugins {
             if (MemeMgr.HasReply(text)) {
                 var rep = MemeMgr.GetReply(text, long.Parse(q));
                 if (rep != null) {
-                    LastMeme.Remove(q);
-                    LastMeme.Add(q, text);
                     if (rep.StartsWith("[picture]") && rep.Length > 9) {
                         ImageMessage image = new ImageMessage();
                         image.Path = $"/recordings/botpicture/{ rep[9..]}";
@@ -320,16 +316,9 @@ namespace LQ1Bot.Plugins {
                     return true;
                 }
             }
-            if (text == "再来点") {
-                if (LastMeme.TryGetValue(q, out string last)) {
-                    text = last;
-                }
-            }
             if (MemeMgr.HasReply(text)) {
                 var rep = MemeMgr.GetReply(text, long.Parse(q));
                 if (rep != null) {
-                    LastMeme.Remove(q);
-                    LastMeme.Add(q, text);
                     if (rep.StartsWith("[picture]") && rep.Length > 9) {
                         ImageMessage image = new ImageMessage();
                         image.Path = $"/recordings/botpicture/{rep[9..]}";
