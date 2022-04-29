@@ -95,6 +95,28 @@ namespace LQ1Bot.Plugins {
                 }
                 return true;
             }
+            if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#")) {
+                if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
+                    if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                        //下载图片
+                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
+                        WebClient wc = new WebClient();
+                        wc.DownloadFile(image.Url, "/recordings/botpicture/" + fileName);
+
+                        //addmeme
+                        string temp = text[8..];
+                        string key = temp.Split('#')[0].ToLower();
+                        string value = "[picture]" + fileName;
+                        MemeMgr.AddMemeReply(key, value);
+
+                        await MessageManager.SendFriendMessageAsync(q, $"已更新{key}");
+                    } else {
+                        await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.NickName}({e.Sender.Id})的的建议\n{text}"), image);
+                        await MessageManager.SendFriendMessageAsync(q, "已将建议转发给Light_Quanta");
+                    }
+                    return true;
+                }
+            }
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#.+")) {
                 if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
                     string temp = text[8..];
@@ -373,6 +395,28 @@ namespace LQ1Bot.Plugins {
                 }
                 return true;
             }
+            if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#")) {
+                if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
+                    if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                        //下载图片
+                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
+                        WebClient wc = new WebClient();
+                        wc.DownloadFile(image.Url, "/recordings/botpicture/" + fileName);
+
+                        //addmeme
+                        string temp = text[8..];
+                        string key = temp.Split('#')[0].ToLower();
+                        string value = "[picture]" + fileName;
+                        MemeMgr.AddMemeReply(key, value);
+
+                        await MessageManager.SendGroupMessageAsync(q, $"已更新{key}");
+                    } else {
+                        await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}"), image);
+                        await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
+                    }
+                    return true;
+                }
+            }
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#.+")) {
                 if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
                     string temp = text[8..];
@@ -381,13 +425,13 @@ namespace LQ1Bot.Plugins {
                     HashSet<string> rep = val.Split("|").ToHashSet();
 
                     MemeMgr.AddMemeReply(key, rep);
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"已更新{key}"));
+                    await MessageManager.SendGroupMessageAsync(q, $"已更新{key}");
 
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", Program.Secret.MemeBackupDirectory + "/meme-" + DateTime.Now.Ticks + ".json");
                 } else {
                     await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}");
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("已将建议转发给Light_Quanta"));
+                    await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
                 }
                 return true;
             }
@@ -401,15 +445,15 @@ namespace LQ1Bot.Plugins {
                     Console.WriteLine(val);
 
                     if (MemeMgr.AddMemeAlias(key, rep)) {
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"已更新{key}"));
+                        await MessageManager.SendGroupMessageAsync(q, $"已更新{key}");
                     } else {
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"添加{key}别名失败，请检查是否存在该meme以及该别名是否存在"));
+                        await MessageManager.SendGroupMessageAsync(q, $"添加{key}别名失败，请检查是否存在该meme以及该别名是否存在");
                     }
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", Program.Secret.MemeBackupDirectory + "/meme-" + DateTime.Now.Ticks + ".json");
                 } else {
                     await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}");
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("已将建议转发给Light_Quanta"));
+                    await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
                 }
                 return true;
             }
@@ -423,7 +467,7 @@ namespace LQ1Bot.Plugins {
                     File.Copy("meme.json", Program.Secret.MemeBackupDirectory + "/meme-" + DateTime.Now.Ticks + ".json");
                 } else {
                     await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}");
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("已将建议转发给Light_Quanta"));
+                    await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
                 }
                 return true;
             }
@@ -431,9 +475,9 @@ namespace LQ1Bot.Plugins {
                 string temp = text[8..];
                 var memes = MemeMgr.GetMeme(temp);
                 if (memes != null) {
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage(memes));
+                    await MessageManager.SendGroupMessageAsync(q, memes);
                 } else {
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("未发现该meme"));
+                    await MessageManager.SendGroupMessageAsync(q, "未发现该meme");
                 }
                 return true;
             }
@@ -441,15 +485,15 @@ namespace LQ1Bot.Plugins {
                 if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
                     string temp = text[8..];
                     if (MemeMgr.RemoveMeme(temp)) {
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"已移除{temp}"));
+                        await MessageManager.SendGroupMessageAsync(q, $"已移除{temp}");
                     } else {
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"未发现{temp}"));
+                        await MessageManager.SendGroupMessageAsync(q, $"未发现{temp}");
                     }
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", Program.Secret.MemeBackupDirectory + "/meme-" + DateTime.Now.Ticks + ".json");
                 } else {
                     await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}");
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("已将建议转发给Light_Quanta"));
+                    await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
                 }
                 return true;
             }
@@ -457,9 +501,9 @@ namespace LQ1Bot.Plugins {
                 string temp = text[12..];
                 string json = MemeMgr.GetMemeJson(temp);
                 if (json != null) {
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage(json));
+                    await MessageManager.SendGroupMessageAsync(q, json);
                 } else {
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("未发现该回复"));
+                    await MessageManager.SendGroupMessageAsync(q, "未发现该回复");
                 }
                 return true;
             }
@@ -473,34 +517,6 @@ namespace LQ1Bot.Plugins {
                     MemeMgr = MemeManager.ReadFromFile("meme.json");
                     File.Copy("meme.json", "/recordings/bot/meme.json");
                 } catch (Exception) { }
-                return true;
-            }
-            if (text == "uploadpic") {
-                if (e.MessageChain.Count() == 3 && (e.MessageChain.ToArray()[2] is ImageMessage im)) {
-                    string FileName = im.ImageId;
-                    if (!File.Exists("/recordings/botpicture/" + FileName + ".png")) {
-                        if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
-                            (new Thread(new ThreadStart(async () => {
-                                try {
-                                    WebRequest imgRequest = WebRequest.Create(im.Url);
-                                    HttpWebResponse res = (HttpWebResponse) imgRequest.GetResponse();
-                                    Image downImage = Image.FromStream(res.GetResponseStream());
-                                    downImage.Save("/recordings/botpicture/" + FileName);
-                                    await MessageManager.SendGroupMessageAsync(q, $"上传图片{FileName}成功！");
-                                    Console.WriteLine(im.ImageId);
-                                } catch (Exception e) {
-                                    Console.WriteLine(e.Message);
-                                    await MessageManager.SendGroupMessageAsync(q, "上传图片出错");
-                                }
-                            }))).Start();
-                        } else {
-                            await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的图片上传请求\n图片名称：{FileName}"), new ImageMessage() { ImageId = im.ImageId, Url = im.Url });
-                            await MessageManager.SendGroupMessageAsync(q, $"已将建议转发给Light_Quanta\n图片名称：{FileName}");
-                        }
-                    } else {
-                        await MessageManager.SendGroupMessageAsync(q, $"该图片{FileName}已存在！");
-                    }
-                }
                 return true;
             }
             if (text.StartsWith("findmeme ")) {
