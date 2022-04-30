@@ -109,6 +109,8 @@ namespace LQ1Bot.Plugins {
                         string value = "[picture]" + fileName;
                         MemeMgr.AddMemeReply(key, value);
 
+                        MemeMgr.Save("meme.json");
+
                         await MessageManager.SendFriendMessageAsync(q, $"已更新{key}");
                     } else {
                         await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.NickName}({e.Sender.Id})的的建议\n{text}"), image);
@@ -408,6 +410,8 @@ namespace LQ1Bot.Plugins {
                         string key = temp.Split('#')[0].ToLower();
                         string value = "[picture]" + fileName;
                         MemeMgr.AddMemeReply(key, value);
+
+                        MemeMgr.Save("meme.json");
 
                         await MessageManager.SendGroupMessageAsync(q, $"已更新{key}");
                     } else {
