@@ -149,16 +149,15 @@ vtb信息
 
                     try {
                         WebClient wc = new WebClient();
-                        string res = wc.DownloadString("https://api.vtbs.moe/v1/vtbs");
-                        JArray Vtbs = JArray.Parse(res);
-
-                        int index = (new Random()).Next(Vtbs.Count);
-                        JObject RndVtbId = (JObject) Vtbs[index];
-
                         string userId;
                         if (Override.TryGetValue(q, out string mid)) {
                             userId = mid;
                         } else {
+                            string res = wc.DownloadString("https://api.vtbs.moe/v1/vtbs");
+                            JArray Vtbs = JArray.Parse(res);
+
+                            int index = (new Random()).Next(Vtbs.Count);
+                            JObject RndVtbId = (JObject) Vtbs[index];
                             userId = RndVtbId["mid"].ToString();
                         }
 
@@ -210,15 +209,15 @@ vtb信息
                     }
                     try {
                         WebClient wc = new WebClient();
-                        string res = wc.DownloadString("https://api.vtbs.moe/v1/living");
-                        JArray Vtbs = JArray.Parse(res);
-
-                        int index = (new Random()).Next(Vtbs.Count);
-
                         string RndVtbId;
+
                         if (Override.TryGetValue(q, out string mid)) {
                             RndVtbId = mid;
                         } else {
+                            string res = wc.DownloadString("https://api.vtbs.moe/v1/living");
+                            JArray Vtbs = JArray.Parse(res);
+
+                            int index = (new Random()).Next(Vtbs.Count);
                             RndVtbId = Vtbs[index].ToObject<string>();
                         }
 
@@ -255,6 +254,17 @@ vtb信息
                     return true;
                 #endregion
                 default:
+                    if (text.StartsWith("!setddtool ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
+                        string uid = text[11..];
+                        if (long.TryParse(uid, out long target)) {
+                            if (Override.ContainsKey(q)) {
+                                Override.Remove(q);
+                            }
+                            Override.Add(q, target.ToString());
+                            File.WriteAllText("ddtoolcfg/config.json", JsonSerializer.Serialize(Override));
+                            await MessageManager.SendGroupMessageAsync(q, "已设置DDTool指定抽取用户uid:" + target);
+                        }
+                    }
                     return false;
             }
         }
