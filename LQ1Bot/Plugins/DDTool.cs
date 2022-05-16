@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 using LQ1Bot.Interface;
 using Mirai.Net.Data.Messages;
@@ -20,7 +22,19 @@ namespace LQ1Bot.Plugins {
         public override bool CanDisable => true;
 
         private Dictionary<string, DateTime> Cooldown = new Dictionary<string, DateTime>();
+        private Dictionary<string, string> Override = new Dictionary<string, string>();
 
+        public DDTool() {
+            try {
+                Override = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText("ddtoolcfg/config.json"));
+            } catch (Exception ex) {
+                Console.WriteLine(ex);
+                if (File.Exists("ddtoolcfg/config.json")) {
+                    File.Move("ddtoolcfg/config.json", "ddtoolcfg/config.json.bak");
+                }
+                File.WriteAllText("ddtoolcfg/config.json", JsonSerializer.Serialize(Override));
+            }
+        }
         public async Task<bool> FriendMessage(FriendMessageReceiver e) {
             string text = Utils.GetMessageText(e.MessageChain).ToLower();
             string q = e.Sender.Id;
@@ -141,7 +155,12 @@ vtb信息
                         int index = (new Random()).Next(Vtbs.Count);
                         JObject RndVtbId = (JObject) Vtbs[index];
 
-                        string userId = RndVtbId["mid"].ToString();
+                        string userId;
+                        if (Override.TryGetValue(q, out string mid)) {
+                            userId = mid;
+                        } else {
+                            userId = RndVtbId["mid"].ToString();
+                        }
 
                         var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + userId));
 
@@ -195,7 +214,13 @@ vtb信息
                         JArray Vtbs = JArray.Parse(res);
 
                         int index = (new Random()).Next(Vtbs.Count);
-                        long RndVtbId = Vtbs[index].ToObject<long>();
+
+                        string RndVtbId;
+                        if (Override.TryGetValue(q, out string mid)) {
+                            RndVtbId = mid;
+                        } else {
+                            RndVtbId = Vtbs[index].ToObject<string>();
+                        }
 
                         var RoomInfo = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/room/" + RndVtbId));
                         string uid = RoomInfo["uid"].ToString();
