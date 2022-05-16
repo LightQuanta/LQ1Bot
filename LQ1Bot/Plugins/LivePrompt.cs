@@ -47,7 +47,7 @@ namespace LQ1Bot.Plugins {
 
                         var Diff = Now - LastLiveTime;
                         string DiffStr = $"{Diff.Days}天{Diff.Hours}小时{Diff.Minutes}分{Diff.Seconds}秒{Diff.Ticks % 10000000 / 10000}毫秒{Diff.Ticks % 10000 / 10}微秒{Diff.Ticks % 10}00纳秒";
-                        await MessageManager.SendGroupMessageAsync(q, content.Replace("{time}", DiffStr));
+                        await MessageManager.SendGroupMessageAsync(q, content.Replace("{time}", DiffStr).Replace("{name}", obj["uname"].ToString()));
                     }
                 } catch (Exception ex) {
                     Console.WriteLine(ex);
