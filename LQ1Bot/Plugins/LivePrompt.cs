@@ -26,7 +26,7 @@ namespace LQ1Bot.Plugins {
             string text = Utils.GetMessageText(e.MessageChain);
             string q = e.Sender.Group.Id;
 
-            if (text == "催播") {
+            if (text == "查询主播状态") {
                 Init(q);
                 try {
                     Init(q);
