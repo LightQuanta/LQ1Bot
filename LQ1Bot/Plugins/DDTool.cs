@@ -168,14 +168,14 @@ vtb信息
                         string roomId = RndVtb["roomid"].ToString();
                         string faceUrl = RndVtb["face"].ToString() + "@150h";
                         string followers = RndVtb["follower"].ToString();
-                        string online = RndVtb["online"].ToString();
+                        bool online = RndVtb["online"].ToObject<bool>();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
                         ImageMessage b = new ImageMessage();
                         b.Url = faceUrl;
                         string id = "";
 
-                        if (online == "0") {
+                        if (online == true) {
                             id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
