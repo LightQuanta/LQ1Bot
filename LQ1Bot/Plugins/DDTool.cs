@@ -152,6 +152,21 @@ vtb信息
                         string userId;
                         if (Override.TryGetValue(q, out string mid)) {
                             userId = mid;
+                            var result = JObject.Parse(wc.DownloadString("http://api.bilibili.com/x/web-interface/card?mid=" + mid));
+                            if (result["code"].ToString() == "0") {
+                                string name = result["data"]["card"]["name"].ToString();
+                                string sign = result["data"]["card"]["sign"].ToString();
+                                ImageMessage b = new ImageMessage();
+                                b.Url = result["data"]["card"]["face"].ToString() + "@150h";
+                                string followers = result["data"]["card"]["fans"].ToString();
+
+                                await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{name}
+签名：{sign}
+粉丝数：{followers}
+主页地址：https://space.bilibili.com/{userId}")));
+                            } else {
+                                await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
+                            }
                         } else {
                             string res = wc.DownloadString("https://api.vtbs.moe/v1/vtbs");
                             JArray Vtbs = JArray.Parse(res);
@@ -159,29 +174,27 @@ vtb信息
                             int index = (new Random()).Next(Vtbs.Count);
                             JObject RndVtbId = (JObject) Vtbs[index];
                             userId = RndVtbId["mid"].ToString();
-                        }
+                            var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + userId));
 
-                        var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + userId));
+                            string userName = RndVtb["uname"].ToString();
+                            string roomId = RndVtb["roomid"].ToString();
+                            string faceUrl = RndVtb["face"].ToString() + "@150h";
+                            string followers = RndVtb["follower"].ToString();
+                            bool online = RndVtb["online"].ToObject<bool>();
+                            string sign = RndVtb["sign"].ToString();
+                            string title = RndVtb["title"].ToString();
+                            ImageMessage b = new ImageMessage();
+                            b.Url = faceUrl;
+                            string id = "";
 
-                        string userName = RndVtb["uname"].ToString();
-                        string roomId = RndVtb["roomid"].ToString();
-                        string faceUrl = RndVtb["face"].ToString() + "@150h";
-                        string followers = RndVtb["follower"].ToString();
-                        bool online = RndVtb["online"].ToObject<bool>();
-                        string sign = RndVtb["sign"].ToString();
-                        string title = RndVtb["title"].ToString();
-                        ImageMessage b = new ImageMessage();
-                        b.Url = faceUrl;
-                        string id = "";
-
-                        if (online == true) {
-                            id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
+                            if (online == true) {
+                                id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
 直播间地址：https://live.bilibili.com/{roomId}")));
-                        } else {
-                            id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
+                            } else {
+                                id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
@@ -189,9 +202,10 @@ vtb信息
 当前正在直播！
 直播间标题：{title}
 直播间地址：https://live.bilibili.com/{roomId}")));
+                            }
+                            Cooldown.Remove(e.Sender.Id);
+                            Cooldown.Add(e.Sender.Id, DateTime.Now);
                         }
-                        Cooldown.Remove(e.Sender.Id);
-                        Cooldown.Add(e.Sender.Id, DateTime.Now);
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
                         await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
@@ -209,34 +223,47 @@ vtb信息
                     }
                     try {
                         WebClient wc = new WebClient();
-                        string RndVtbId;
 
                         if (Override.TryGetValue(q, out string mid)) {
-                            RndVtbId = mid;
+
+                            var result = JObject.Parse(wc.DownloadString("http://api.bilibili.com/x/web-interface/card?mid=" + mid));
+                            if (result["code"].ToString() == "0") {
+                                string name = result["data"]["card"]["name"].ToString();
+                                string sign = result["data"]["card"]["sign"].ToString();
+                                ImageMessage b = new ImageMessage();
+                                b.Url = result["data"]["card"]["face"].ToString() + "@150h";
+                                string followers = result["data"]["card"]["fans"].ToString();
+
+                                await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{name}
+签名：{sign}
+粉丝数：{followers}
+主页地址：https://space.bilibili.com/{mid}")));
+                            } else {
+                                await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
+                            }
                         } else {
                             string res = wc.DownloadString("https://api.vtbs.moe/v1/living");
                             JArray Vtbs = JArray.Parse(res);
 
                             int index = (new Random()).Next(Vtbs.Count);
-                            RndVtbId = Vtbs[index].ToObject<string>();
-                        }
+                            string RndVtbId = Vtbs[index].ToObject<string>();
 
-                        var RoomInfo = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/room/" + RndVtbId));
-                        string uid = RoomInfo["uid"].ToString();
-                        string popularity = RoomInfo["popularity"].ToString();
+                            var RoomInfo = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/room/" + RndVtbId));
+                            string uid = RoomInfo["uid"].ToString();
+                            string popularity = RoomInfo["popularity"].ToString();
 
-                        var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + uid));
+                            var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + uid));
 
-                        string userName = RndVtb["uname"].ToString();
-                        string roomId = RndVtb["roomid"].ToString();
-                        string faceUrl = RndVtb["face"].ToString() + "@150h";
-                        string followers = RndVtb["follower"].ToString();
-                        string online = RndVtb["online"].ToString();
-                        string sign = RndVtb["sign"].ToString();
-                        string title = RndVtb["title"].ToString();
-                        ImageMessage b = new ImageMessage();
-                        b.Url = faceUrl;
-                        string id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"{title}
+                            string userName = RndVtb["uname"].ToString();
+                            string roomId = RndVtb["roomid"].ToString();
+                            string faceUrl = RndVtb["face"].ToString() + "@150h";
+                            string followers = RndVtb["follower"].ToString();
+                            string online = RndVtb["online"].ToString();
+                            string sign = RndVtb["sign"].ToString();
+                            string title = RndVtb["title"].ToString();
+                            ImageMessage b = new ImageMessage();
+                            b.Url = faceUrl;
+                            string id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"{title}
 https://live.bilibili.com/{roomId}
 人气：{popularity}
 
@@ -245,8 +272,9 @@ vtb信息
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{uid}")));
-                        Cooldown.Remove(e.Sender.Id);
-                        Cooldown.Add(e.Sender.Id, DateTime.Now);
+                            Cooldown.Remove(e.Sender.Id);
+                            Cooldown.Add(e.Sender.Id, DateTime.Now);
+                        }
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
                         await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
