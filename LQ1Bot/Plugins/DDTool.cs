@@ -58,12 +58,12 @@ namespace LQ1Bot.Plugins {
                         string roomId = RndVtb["roomid"].ToString();
                         string faceUrl = RndVtb["face"].ToString() + "@150h";
                         string followers = RndVtb["follower"].ToString();
-                        string online = RndVtb["online"].ToString();
+                        bool online = RndVtb["online"].ToObject<bool>();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
                         ImageMessage b = new ImageMessage();
                         b.Url = faceUrl;
-                        if (online == "0") {
+                        if (online == false) {
                             await MessageManager.SendFriendMessageAsync(q, b.Append($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
@@ -187,7 +187,7 @@ vtb信息
                             b.Url = faceUrl;
                             string id = "";
 
-                            if (online == true) {
+                            if (online == false) {
                                 id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
