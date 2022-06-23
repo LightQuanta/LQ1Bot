@@ -25,7 +25,7 @@ namespace LQ1Bot.Plugins {
             string text = Utils.GetMessageText(e.MessageChain);
             string q = e.Sender.Group.Id;
 
-            if (text == "警钟") {
+            if (text == "警钟" || text == "警钟长鸣" || text == "警钟敲烂") {
                 Init(q);
                 string temp = File.ReadAllText($"alarmcfg/{q}.txt");
                 string time = temp.Split("|")[0];
