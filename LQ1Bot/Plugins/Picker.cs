@@ -118,7 +118,7 @@ namespace LQ1Bot.Plugins {
                 string name = text.ToLower().Split(' ')[2];
                 foreach (var v in PickRecord) {
                     if (v.Name == name) {
-                        if (e.Sender.Id != v.qq && e.Permission == Mirai.Net.Data.Shared.Permissions.Member) {
+                        if (e.Sender.Id != v.qq && e.Sender.Permission == Mirai.Net.Data.Shared.Permissions.Member) {
                             await MessageManager.SendGroupMessageAsync(q, "你不是该抽奖的发起者！");
                             return true;
                         } else {

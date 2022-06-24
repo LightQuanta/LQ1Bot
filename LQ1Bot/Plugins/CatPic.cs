@@ -33,7 +33,7 @@ namespace LQ1Bot.Plugins {
                     await MessageManager.SendFriendMessageAsync(q, image);
                 } catch (Exception ee) {
                     Console.WriteLine(ee.Message);
-                    await MessageManager.SendFriendMessageAsync(q, new PlainMessage("获取猫图出错"));
+                    await MessageManager.SendFriendMessageAsync(q, "获取猫图出错");
                 }
                 return true;
             }
@@ -55,7 +55,7 @@ namespace LQ1Bot.Plugins {
                     await MessageManager.SendGroupMessageAsync(q, image);
                 } catch (Exception ee) {
                     Console.WriteLine(ee.Message);
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取猫图出错"));
+                    await MessageManager.SendGroupMessageAsync(q, "获取猫图出错");
                 }
                 return true;
             }

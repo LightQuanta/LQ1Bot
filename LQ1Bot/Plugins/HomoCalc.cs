@@ -79,7 +79,7 @@ namespace LQ1Bot.Plugins {
 
         public async Task<bool> FriendMessage(FriendMessageReceiver e) {
             string text = Utils.GetMessageText(e.MessageChain);
-            string q = e.Id;
+            string q = e.FriendId;
 
             if (text.StartsWith("恶臭论证 ")) {
                 text = text[5..];

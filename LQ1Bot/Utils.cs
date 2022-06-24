@@ -38,7 +38,7 @@ namespace LQ1Bot {
 
                     case Messages.At:
                         AtMessage am = (AtMessage) v;
-                        text += am.Display;
+                        text += am.ToString();
                         break;
                         //case "Quote":
                         //    QuoteMessage qm = (QuoteMessage) v;

@@ -82,9 +82,9 @@ namespace LQ1Bot.Plugins {
                         _ => MemeBase.MatchType.Equal,
                     };
                     if (MemeMgr.SetMeme(key, rep, type)) {
-                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"已更新{key}"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"已更新{key}");
                     } else {
-                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"设置{key}时出错"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"设置{key}时出错");
                     }
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", "memebkup/meme-" + DateTime.Now.Ticks + ".json");
@@ -112,7 +112,7 @@ namespace LQ1Bot.Plugins {
 
                         await MessageManager.SendFriendMessageAsync(q, $"已更新{key}");
                     } else {
-                        await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.NickName}({e.Sender.Id})的的建议\n{text}"), image);
+                        await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.NickName}({e.Sender.Id})的的建议\n{text}" + image);
                         await MessageManager.SendFriendMessageAsync(q, "已将建议转发给Light_Quanta");
                     }
                     return true;
@@ -126,7 +126,7 @@ namespace LQ1Bot.Plugins {
                     HashSet<string> rep = val.Split("|").ToHashSet();
 
                     MemeMgr.AddMemeReply(key, rep);
-                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"已更新{key}"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"已更新{key}");
 
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", "memebkup/meme-" + DateTime.Now.Ticks + ".json");
@@ -146,9 +146,9 @@ namespace LQ1Bot.Plugins {
                     Console.WriteLine(val);
 
                     if (MemeMgr.AddMemeAlias(key, rep)) {
-                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"已更新{key}"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"已更新{key}");
                     } else {
-                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"添加{key}别名失败，请检查是否存在该meme以及该别名是否存在"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"添加{key}别名失败，请检查是否存在该meme以及该别名是否存在");
                     }
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", "memebkup/meme-" + DateTime.Now.Ticks + ".json");
@@ -176,9 +176,9 @@ namespace LQ1Bot.Plugins {
                 string temp = text[8..];
                 var memes = MemeMgr.GetMeme(temp);
                 if (memes != null) {
-                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage(memes));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, memes);
                 } else {
-                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage("未发现该回复"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, "未发现该回复");
                 }
                 return true;
             }
@@ -186,9 +186,9 @@ namespace LQ1Bot.Plugins {
                 if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..];
                     if (MemeMgr.RemoveMeme(temp)) {
-                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"已移除{temp}"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"已移除{temp}");
                     } else {
-                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"未发现{temp}"));
+                        await MessageManager.SendFriendMessageAsync(e.Sender.Id, $"未发现{temp}");
                     }
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", "memebkup/meme-" + DateTime.Now.Ticks + ".json");
@@ -202,9 +202,9 @@ namespace LQ1Bot.Plugins {
                 string temp = text[12..];
                 string json = MemeMgr.GetMemeJson(temp);
                 if (json != null) {
-                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage(json));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, json);
                 } else {
-                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage("未发现该回复"));
+                    await MessageManager.SendFriendMessageAsync(e.Sender.Id, "未发现该回复");
                 }
                 return true;
             }
@@ -298,13 +298,13 @@ namespace LQ1Bot.Plugins {
                         image.Path = $"/recordings/botpicture/{ rep[9..]}";
                         await MessageManager.SendFriendMessageAsync(q, image);
                     } else {
-                        string n = await MessageManager.SendFriendMessageAsync(q, new PlainMessage(rep));
+                        string n = await MessageManager.SendFriendMessageAsync(q, rep);
                     }
                     return true;
                 }
             }
             if (text.ToLower() == "guid") {
-                await MessageManager.SendFriendMessageAsync(q, new PlainMessage(Guid.NewGuid().ToString()));
+                await MessageManager.SendFriendMessageAsync(q, Guid.NewGuid().ToString());
                 return true;
             }
             #endregion
@@ -361,7 +361,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (text.ToLower() == "guid") {
-                await MessageManager.SendGroupMessageAsync(q, new PlainMessage(Guid.NewGuid().ToString()));
+                await MessageManager.SendGroupMessageAsync(q, Guid.NewGuid().ToString());
                 return true;
             }
             #endregion
@@ -383,15 +383,15 @@ namespace LQ1Bot.Plugins {
                         _ => MemeBase.MatchType.Equal,
                     };
                     if (MemeMgr.SetMeme(key, rep, type)) {
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"已更新{key}"));
+                        await MessageManager.SendGroupMessageAsync(q, $"已更新{key}");
                     } else {
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage($"设置{key}时出错"));
+                        await MessageManager.SendGroupMessageAsync(q, $"设置{key}时出错");
                     }
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", Program.Secret.MemeBackupDirectory + "/meme-" + DateTime.Now.Ticks + ".json");
                 } else {
                     await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}");
-                    await MessageManager.SendGroupMessageAsync(q, new PlainMessage("已将建议转发给Light_Quanta"));
+                    await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
                 }
                 return true;
             }
@@ -413,7 +413,7 @@ namespace LQ1Bot.Plugins {
 
                         await MessageManager.SendGroupMessageAsync(q, $"已更新{key}");
                     } else {
-                        await MessageManager.SendFriendMessageAsync("2224899528", new PlainMessage($"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}"), image);
+                        await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.Group.Name}的{e.Sender.Name}({e.Sender.Id})的建议\n{text}" + image);
                         await MessageManager.SendGroupMessageAsync(q, "已将建议转发给Light_Quanta");
                     }
                     return true;

@@ -160,10 +160,10 @@ vtb信息
                                 b.Url = result["data"]["card"]["face"].ToString() + "@150h";
                                 string followers = result["data"]["card"]["fans"].ToString();
 
-                                await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{name}
+                                await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{name}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{userId}")));
+主页地址：https://space.bilibili.com/{userId}"));
                             } else {
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
@@ -188,27 +188,27 @@ vtb信息
                             string id = "";
 
                             if (online == false) {
-                                id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
+                                id = await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
-直播间地址：https://live.bilibili.com/{roomId}")));
+直播间地址：https://live.bilibili.com/{roomId}"));
                             } else {
-                                id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{userName}
+                                id = await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
 
 当前正在直播！
 直播间标题：{title}
-直播间地址：https://live.bilibili.com/{roomId}")));
+直播间地址：https://live.bilibili.com/{roomId}"));
                             }
                             Cooldown.Remove(e.Sender.Id);
                             Cooldown.Add(e.Sender.Id, DateTime.Now);
                         }
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
+                        await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                     }
                     return true;
                 #endregion
@@ -234,10 +234,10 @@ vtb信息
                                 b.Url = result["data"]["card"]["face"].ToString() + "@150h";
                                 string followers = result["data"]["card"]["fans"].ToString();
 
-                                await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"名称：{name}
+                                await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{name}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{mid}")));
+主页地址：https://space.bilibili.com/{mid}"));
                             } else {
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
@@ -263,7 +263,7 @@ vtb信息
                             string title = RndVtb["title"].ToString();
                             ImageMessage b = new ImageMessage();
                             b.Url = faceUrl;
-                            string id = await MessageManager.SendGroupMessageAsync(q, b.Append(new PlainMessage($@"{title}
+                            string id = await MessageManager.SendGroupMessageAsync(q, b.Append($@"{title}
 https://live.bilibili.com/{roomId}
 人气：{popularity}
 
@@ -271,13 +271,13 @@ vtb信息
 名称：{userName}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{uid}")));
+主页地址：https://space.bilibili.com/{uid}"));
                             Cooldown.Remove(e.Sender.Id);
                             Cooldown.Add(e.Sender.Id, DateTime.Now);
                         }
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
-                        await MessageManager.SendGroupMessageAsync(q, new PlainMessage("获取vtb信息出错"));
+                        await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                     }
                     return true;
                 #endregion

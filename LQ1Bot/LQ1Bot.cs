@@ -43,7 +43,7 @@ namespace LQ1Bot {
             bot.MessageReceived
                 .OfType<TempMessageReceiver>()
                 .Subscribe(receiver => {
-                    MessageManager.SendTempMessageAsync(receiver.Sender.Id, "请先添加好友");
+                    MessageManager.SendTempMessageAsync(receiver.GroupId, receiver.Sender.Id, "请先添加好友");
                 });
             bot.EventReceived
                 .OfType<NewInvitationRequestedEvent>()
