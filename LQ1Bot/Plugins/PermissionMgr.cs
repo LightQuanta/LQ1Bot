@@ -68,6 +68,44 @@ namespace LQ1Bot.Plugins {
             return Permissions.GetValueOrDefault(e.Sender.Id)?.Contains("banned") ?? false;
         }
 
+        public async Task<bool> FriendMessage(FriendMessageReceiver e) {
+            string text = Utils.GetMessageText(e.MessageChain);
+            string q = e.Sender.Id;
+            if (text == "whoami") {
+                await MessageManager.SendFriendMessageAsync(q, "permissions: " + string.Join(",", Permissions.GetValueOrDefault(e.Sender.Id)));
+            }
+            if (Permissions.GetValueOrDefault(e.Sender.Id)?.Contains("admin") ?? false) {
+                if (text.StartsWith("!ban ")) {
+                    string id = text[5..];
+                    if (long.TryParse(id, out long id2ban)) {
+                        if (Permissions.TryGetValue(id2ban.ToString(), out HashSet<String> permissions)) {
+                            permissions.Add("banned");
+                        } else {
+                            Permissions.Add(id2ban.ToString(), new HashSet<string>() { "banned" });
+                        }
+                        Save();
+                        await MessageManager.SendFriendMessageAsync(q, "已屏蔽" + id2ban);
+                    } else {
+                        await MessageManager.SendFriendMessageAsync(q, "输入格式错误");
+                    }
+                }
+                if (text.StartsWith("!unban ")) {
+                    string id = text[7..];
+                    if (long.TryParse(id, out long id2ban)) {
+                        Permissions.Remove(id2ban.ToString());
+                        Save();
+                        await MessageManager.SendFriendMessageAsync(q, "已解封" + id2ban);
+                    } else {
+                        await MessageManager.SendFriendMessageAsync(q, "输入格式错误");
+                    }
+                }
+                return false;
+            }
+            return false;
+            //return Permissions.GetValueOrDefault(e.Sender.Id)?.Contains("banned") ?? false;
+        }
+
+
         private void Save() {
             File.WriteAllText("permissions.json", JObject.FromObject(Permissions).ToString());
         }
