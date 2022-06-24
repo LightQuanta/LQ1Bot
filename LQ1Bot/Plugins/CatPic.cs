@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Flurl.Http;
 using LQ1Bot.Interface;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
@@ -25,10 +22,9 @@ namespace LQ1Bot.Plugins {
             #region CatPic
             if (text == "来点猫猫" || text == "来点猫图") {
                 try {
-                    WebClient wc = new WebClient();
-                    string json = wc.DownloadString("https://api.thecatapi.com/v1/images/search");
+                    string json = await "https://api.thecatapi.com/v1/images/search".GetStringAsync();
                     string id = JArray.Parse(json)[0]["url"].ToString();
-                    ImageMessage image = new ImageMessage();
+                    ImageMessage image = new();
                     image.Url = id;
                     await MessageManager.SendFriendMessageAsync(q, image);
                 } catch (Exception ee) {
@@ -47,10 +43,9 @@ namespace LQ1Bot.Plugins {
             #region CatPic
             if (text == "来点猫猫" || text == "来点猫图") {
                 try {
-                    WebClient wc = new WebClient();
-                    string json = wc.DownloadString("https://api.thecatapi.com/v1/images/search");
+                    string json = await "https://api.thecatapi.com/v1/images/search".GetStringAsync();
                     string id = JArray.Parse(json)[0]["url"].ToString();
-                    ImageMessage image = new ImageMessage();
+                    ImageMessage image = new();
                     image.Url = id;
                     await MessageManager.SendGroupMessageAsync(q, image);
                 } catch (Exception ee) {

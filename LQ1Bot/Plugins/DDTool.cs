@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Flurl.Http;
 using LQ1Bot.Interface;
-using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Sessions.Http.Managers;
@@ -43,8 +42,7 @@ namespace LQ1Bot.Plugins {
                 case "今天看谁":
                 case "今天d谁":
                     try {
-                        WebClient wc = new WebClient();
-                        string res = wc.DownloadString("https://api.vtbs.moe/v1/vtbs");
+                        string res = await "https://api.vtbs.moe/v1/vtbs".GetStringAsync();
                         JArray Vtbs = JArray.Parse(res);
 
                         int index = (new Random()).Next(Vtbs.Count);
@@ -52,7 +50,7 @@ namespace LQ1Bot.Plugins {
 
                         string userId = RndVtbId["mid"].ToString();
 
-                        var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + userId));
+                        var RndVtb = JObject.Parse(await ("https://api.vtbs.moe/v1/detail/" + userId).GetStringAsync());
 
                         string userName = RndVtb["uname"].ToString();
                         string roomId = RndVtb["roomid"].ToString();
@@ -89,18 +87,17 @@ namespace LQ1Bot.Plugins {
                 case "现在看谁":
                 case "现在d谁":
                     try {
-                        WebClient wc = new WebClient();
-                        string res = wc.DownloadString("https://api.vtbs.moe/v1/living");
+                        string res = await "https://api.vtbs.moe/v1/living".GetStringAsync();
                         JArray Vtbs = JArray.Parse(res);
 
                         int index = (new Random()).Next(Vtbs.Count);
                         long RndVtbId = Vtbs[index].ToObject<long>();
 
-                        var RoomInfo = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/room/" + RndVtbId));
+                        var RoomInfo = JObject.Parse(await ("https://api.vtbs.moe/v1/room/" + RndVtbId).GetStringAsync());
                         string uid = RoomInfo["uid"].ToString();
                         string popularity = RoomInfo["popularity"].ToString();
 
-                        var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + uid));
+                        var RndVtb = JObject.Parse(await ("https://api.vtbs.moe/v1/detail/" + uid).GetStringAsync());
 
                         string userName = RndVtb["uname"].ToString();
                         string roomId = RndVtb["roomid"].ToString();
@@ -148,11 +145,10 @@ vtb信息
                     }
 
                     try {
-                        WebClient wc = new WebClient();
                         string userId;
                         if (Override.TryGetValue(q, out string mid)) {
                             userId = mid;
-                            var result = JObject.Parse(wc.DownloadString("http://api.bilibili.com/x/web-interface/card?mid=" + mid));
+                            var result = JObject.Parse(await ("http://api.bilibili.com/x/web-interface/card?mid=" + mid).GetStringAsync());
                             if (result["code"].ToString() == "0") {
                                 string name = result["data"]["card"]["name"].ToString();
                                 string sign = result["data"]["card"]["sign"].ToString();
@@ -168,13 +164,13 @@ vtb信息
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
                         } else {
-                            string res = wc.DownloadString("https://api.vtbs.moe/v1/vtbs");
+                            string res = await ("https://api.vtbs.moe/v1/vtbs").GetStringAsync();
                             JArray Vtbs = JArray.Parse(res);
 
                             int index = (new Random()).Next(Vtbs.Count);
                             JObject RndVtbId = (JObject) Vtbs[index];
                             userId = RndVtbId["mid"].ToString();
-                            var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + userId));
+                            var RndVtb = JObject.Parse(await ("https://api.vtbs.moe/v1/detail/" + userId).GetStringAsync());
 
                             string userName = RndVtb["uname"].ToString();
                             string roomId = RndVtb["roomid"].ToString();
@@ -222,11 +218,8 @@ vtb信息
                         }
                     }
                     try {
-                        WebClient wc = new WebClient();
-
                         if (Override.TryGetValue(q, out string mid)) {
-
-                            var result = JObject.Parse(wc.DownloadString("http://api.bilibili.com/x/web-interface/card?mid=" + mid));
+                            var result = JObject.Parse(await ("http://api.bilibili.com/x/web-interface/card?mid=" + mid).GetStringAsync());
                             if (result["code"].ToString() == "0") {
                                 string name = result["data"]["card"]["name"].ToString();
                                 string sign = result["data"]["card"]["sign"].ToString();
@@ -242,17 +235,17 @@ vtb信息
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
                         } else {
-                            string res = wc.DownloadString("https://api.vtbs.moe/v1/living");
+                            string res = await ("https://api.vtbs.moe/v1/living").GetStringAsync();
                             JArray Vtbs = JArray.Parse(res);
 
                             int index = (new Random()).Next(Vtbs.Count);
                             string RndVtbId = Vtbs[index].ToObject<string>();
 
-                            var RoomInfo = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/room/" + RndVtbId));
+                            var RoomInfo = JObject.Parse(await ("https://api.vtbs.moe/v1/room/" + RndVtbId).GetStringAsync());
                             string uid = RoomInfo["uid"].ToString();
                             string popularity = RoomInfo["popularity"].ToString();
 
-                            var RndVtb = JObject.Parse(wc.DownloadString("https://api.vtbs.moe/v1/detail/" + uid));
+                            var RndVtb = JObject.Parse(await ("https://api.vtbs.moe/v1/detail/" + uid).GetStringAsync());
 
                             string userName = RndVtb["uname"].ToString();
                             string roomId = RndVtb["roomid"].ToString();

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Flurl.Http;
 using LQ1Bot.Interface;
 using LQ1Bot.Meme;
 using Mirai.Net.Data.Messages.Concretes;
@@ -99,8 +97,8 @@ namespace LQ1Bot.Plugins {
                     if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
                         string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
-                        WebClient wc = new WebClient();
-                        wc.DownloadFile(image.Url, "/recordings/botpicture/" + fileName);
+
+                        await image.Url.DownloadFileAsync("/recordings/botpicture/" + fileName);
 
                         //addmeme
                         string temp = text[8..];
@@ -400,8 +398,7 @@ namespace LQ1Bot.Plugins {
                     if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
                         string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
-                        WebClient wc = new WebClient();
-                        wc.DownloadFile(image.Url, "/recordings/botpicture/" + fileName);
+                        await image.Url.DownloadFileAsync("/recordings/botpicture/" + fileName);
 
                         //addmeme
                         string temp = text[8..];
