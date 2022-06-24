@@ -54,6 +54,18 @@ namespace LQ1Bot.Plugins {
                 }
             }
 
+            if (text == "!getalarm") {
+                if (AlarmExists(q)) {
+                    string temp = File.ReadAllText($"alarmcfg/{q}.txt");
+                    string time = temp.Split("|")[0];
+                    string content = temp.Split("|")[1];
+                    var InitTime = new DateTime(long.Parse(time));
+                    await MessageManager.SendGroupMessageAsync(q, $"{InitTime.ToString("yyyy-MM-dd HH:mm:ss")}|{content}");
+                } else {
+                    await MessageManager.SendGroupMessageAsync(q, "本群还未添加警钟！");
+                }
+            }
+
             if (text == "警钟" || text == "警钟长鸣" || text == "警钟敲烂") {
                 if (AlarmExists(q)) {
                     string temp = File.ReadAllText($"alarmcfg/{q}.txt");
