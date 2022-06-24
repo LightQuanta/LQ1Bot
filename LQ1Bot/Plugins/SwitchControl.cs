@@ -40,8 +40,7 @@ namespace LQ1Bot.Plugins {
             string q = e.Sender.Group.Id;
             #region 启用/禁用控制
             if (text == "!enablebot") {
-                if (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member ||
-                    e.Sender.Id == "2224899528") {
+                if (PermissionMgr.IsGroupOrBotAdmin(e.Sender)) {
                     if (BlacklistGroups == null) {
                         BlacklistGroups = new HashSet<long>();
                     } else {
@@ -58,8 +57,7 @@ namespace LQ1Bot.Plugins {
             }
 
             if (text == "!banbot" || text == "!disablebot") {
-                if (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member ||
-                    e.Sender.Id == "2224899528") {
+                if (PermissionMgr.IsGroupOrBotAdmin(e.Sender)) {
                     if (BlacklistGroups == null) {
                         BlacklistGroups = new HashSet<long>() { long.Parse(q) };
                     } else {

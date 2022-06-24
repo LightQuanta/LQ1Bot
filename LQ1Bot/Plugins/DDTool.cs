@@ -282,7 +282,7 @@ vtb信息
                     return true;
                 #endregion
                 default:
-                    if (text.StartsWith("!setddtool ") && (e.Sender.Permission != Mirai.Net.Data.Shared.Permissions.Member || e.Sender.Id == "2224899528")) {
+                    if (text.StartsWith("!setddtool ") && PermissionMgr.IsGroupOrBotAdmin(e.Sender)) {
                         string uid = text[11..];
                         if (long.TryParse(uid, out long target)) {
                             if (Override.ContainsKey(q)) {
