@@ -67,15 +67,14 @@ namespace LQ1Bot.Plugins {
 
             #region meme管理
             if (Regex.IsMatch(text.ToLower(), @"^setmeme ((equal|regexmatch|regexreplace|startswith) )?.+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     var match = Regex.Match(text.ToLower(), @"^setmeme (?<mode>(equal|regexmatch|regexreplace|startswith) )?(?<key>.+)#(?<val>.+)$");
 
                     string key = match.Groups["key"].Value;
                     string val = match.Groups["val"].Value;
                     HashSet<string> rep = val.Split("|").ToHashSet();
                     Console.WriteLine("{" + match.Groups["mode"].Value + "}");
-                    MemeBase.MatchType type = match.Groups["mode"].Value switch
-                    {
+                    MemeBase.MatchType type = match.Groups["mode"].Value switch {
                         "equal " => MemeBase.MatchType.Equal,
                         "regexmatch " => MemeBase.MatchType.RegexMatch,
                         "regexreplace " => MemeBase.MatchType.RegexReplace,
@@ -97,7 +96,7 @@ namespace LQ1Bot.Plugins {
             }
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#")) {
                 if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
-                    if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                    if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
                         string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
                         WebClient wc = new WebClient();
@@ -120,7 +119,7 @@ namespace LQ1Bot.Plugins {
                 }
             }
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..];
                     string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1];
@@ -138,7 +137,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (Regex.IsMatch(text.ToLower(), @"^addalias .+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[9..];
                     string key = temp.Split('#')[0];
                     string val = temp.Split('#')[1];
@@ -160,7 +159,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (Regex.IsMatch(text.ToLower(), @"^remmeme .+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..].ToLower();
                     string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1].ToLower();
@@ -184,7 +183,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (Regex.IsMatch(text.ToLower(), @"^delmeme .+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..];
                     if (MemeMgr.RemoveMeme(temp)) {
                         await MessageManager.SendFriendMessageAsync(e.Sender.Id, new PlainMessage($"已移除{temp}"));
@@ -368,7 +367,7 @@ namespace LQ1Bot.Plugins {
             #endregion
             #region meme管理
             if (Regex.IsMatch(text.ToLower(), @"^setmeme ((equal|regexmatch|regexreplace|startswith) )?.+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     var match = Regex.Match(text.ToLower(), @"^setmeme (?<mode>(equal|regexmatch|regexreplace|startswith) )?(?<key>.+)#(?<val>.+)$");
 
                     string key = match.Groups["key"].Value;
@@ -376,8 +375,7 @@ namespace LQ1Bot.Plugins {
 
                     HashSet<string> rep = val.Split("|").ToHashSet();
                     Console.WriteLine("{" + match.Groups["mode"].Value + "}");
-                    MemeBase.MatchType type = match.Groups["mode"].Value switch
-                    {
+                    MemeBase.MatchType type = match.Groups["mode"].Value switch {
                         "equal " => MemeBase.MatchType.Equal,
                         "regexmatch " => MemeBase.MatchType.RegexMatch,
                         "regexreplace " => MemeBase.MatchType.RegexReplace,
@@ -399,7 +397,7 @@ namespace LQ1Bot.Plugins {
             }
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#")) {
                 if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
-                    if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                    if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
                         string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
                         WebClient wc = new WebClient();
@@ -422,7 +420,7 @@ namespace LQ1Bot.Plugins {
                 }
             }
             if (Regex.IsMatch(text.ToLower(), @"^addmeme .+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..];
                     string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1];
@@ -440,7 +438,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (Regex.IsMatch(text.ToLower(), @"^addalias .+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[9..];
                     string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1];
@@ -462,7 +460,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (Regex.IsMatch(text.ToLower(), @"^remmeme .+#.+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..].ToLower();
                     string key = temp.Split('#')[0].ToLower();
                     string val = temp.Split('#')[1].ToLower();
@@ -486,7 +484,7 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             if (Regex.IsMatch(text.ToLower(), @"^delmeme .+")) {
-                if (MemeMgr.IsAdmin(long.Parse(e.Sender.Id))) {
+                if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                     string temp = text[8..];
                     if (MemeMgr.RemoveMeme(temp)) {
                         await MessageManager.SendGroupMessageAsync(q, $"已移除{temp}");

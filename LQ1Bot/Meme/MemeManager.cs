@@ -20,7 +20,7 @@ namespace LQ1Bot.Meme {
         public string SavePath { get; set; }
 
         public long LastUpdateTime { get; set; }
-        public List<long> Admin { get; set; }
+        //public List<long> Admin { get; set; }
 
         public HashSet<MemeBase> Memes {
             get => memes;
@@ -30,7 +30,7 @@ namespace LQ1Bot.Meme {
             }
         }
 
-        public bool IsAdmin(long qq) => Admin?.Contains(qq) ?? false;
+        //public bool IsAdmin(long qq) => Admin?.Contains(qq) ?? false;
 
         public string GetMeme(string MemeName) {
             foreach (var m in memes) {
