@@ -30,14 +30,14 @@ namespace LQ1Bot.Plugins {
                 if (alarm.Length > 0 && alarm.Split("|").Length == 2) {
                     string time = alarm.Split("|")[0];
                     string content = alarm.Split("|")[1];
-                    Match m = Regex.Match(time, @"^(\d{1,4})$-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$");
+                    Match m = Regex.Match(time, @"^(\d{1,4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})$");
                     if (m.Success) {
-                        int year = int.Parse(m.Groups[0].Value);
-                        int month = int.Parse(m.Groups[1].Value);
-                        int date = int.Parse(m.Groups[2].Value);
-                        int hour = int.Parse(m.Groups[3].Value);
-                        int minute = int.Parse(m.Groups[4].Value);
-                        int second = int.Parse(m.Groups[5].Value);
+                        int year = int.Parse(m.Groups[1].Value);
+                        int month = int.Parse(m.Groups[2].Value);
+                        int date = int.Parse(m.Groups[3].Value);
+                        int hour = int.Parse(m.Groups[4].Value);
+                        int minute = int.Parse(m.Groups[5].Value);
+                        int second = int.Parse(m.Groups[6].Value);
                         try {
                             DateTime t = new DateTime(year, month, date, hour, minute, second);
                             long tick = t.Ticks;
