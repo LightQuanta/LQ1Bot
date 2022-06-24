@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LQ1Bot.Plugins {
 
-    internal class PermissionMgr : PluginBase, IGroupMessage {
+    internal class PermissionMgr : PluginBase, IGroupMessage, IFriendMessage {
         public override int Priority => 50000;
 
         public override string PluginName => "PermissionMgr";
