@@ -24,7 +24,14 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> GroupMessage(GroupMessageReceiver e) {
             string text = Utils.GetMessageText(e.MessageChain);
             string q = e.Sender.Group.Id;
-
+            if ((text == "!delalarm") && PermissionMgr.IsGroupOrBotAdmin(e.Sender)) {
+                if (AlarmExists(q)) {
+                    File.Delete($"alarmcfg/{q}.txt");
+                    await MessageManager.SendGroupMessageAsync(q, "已移除警钟");
+                } else {
+                    await MessageManager.SendGroupMessageAsync(q, "本群还未添加警钟！");
+                }
+            }
             if (text.StartsWith("!setalarm ") && PermissionMgr.IsGroupOrBotAdmin(e.Sender)) {
                 string alarm = text[10..];
                 if (alarm.Length > 0 && alarm.Split("|").Length == 2) {
@@ -39,7 +46,7 @@ namespace LQ1Bot.Plugins {
                         int minute = int.Parse(m.Groups[5].Value);
                         int second = int.Parse(m.Groups[6].Value);
                         try {
-                            DateTime t = new DateTime(year, month, date, hour, minute, second);
+                            DateTime t = new(year, month, date, hour, minute, second);
                             long tick = t.Ticks;
                             File.WriteAllText($"alarmcfg/{q}.txt", tick + "|" + content);
                             await MessageManager.SendGroupMessageAsync(q, "成功设置警钟");
