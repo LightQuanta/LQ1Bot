@@ -49,7 +49,10 @@ namespace LQ1Bot.Plugins {
                         try {
                             DateTime t = new(year, month, date, hour, minute, second);
                             long tick = t.Ticks;
-                            List<string> list = new(GetAlarms(q));
+                            List<string> list = new();
+                            if (AlarmExists(q)) {
+                                list.AddRange(GetAlarms(q));
+                            }
                             list.Add(tick + "|" + content);
                             File.WriteAllText($"alarmcfg/{q}.txt", string.Join("\n", list));
                             await MessageManager.SendGroupMessageAsync(q, "成功添加警钟");
