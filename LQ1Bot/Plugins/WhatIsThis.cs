@@ -1,10 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Flurl.Http;
 using LQ1Bot.Interface;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Sessions.Http.Managers;
@@ -35,30 +38,22 @@ namespace LQ1Bot.Plugins {
 
                 text = text[..^5];
                 try {
-                    JObject o = new JObject {
-                        { "phrase", text },
-                        { "page", 1 }
+                    var o = new {
+                        phrase = text,
+                        page = 1
                     };
 
                     string json = JsonConvert.SerializeObject(o, Formatting.None);
                     Console.WriteLine(json);
 
-                    WebRequest req = WebRequest.Create("https://api.jikipedia.com/go/search_entities");
-                    req.Method = "POST";
-                    req.Headers.Add("Client", "web");
-                    req.Headers.Add("Client-Version", "2.6.3l");
-                    req.ContentType = "application/json";
+                    string resp = await "https://api.jikipedia.com/go/search_entities"
+                        .WithHeader("Content-Type", "application/json;charset=utf-8")
+                        .WithHeader("Client", "web")
+                        .WithHeader("Client-Version", "2.7.2k")
+                        .WithHeader("XID", GenerateXID())
+                        .PostJsonAsync(o)
+                        .ReceiveString();
 
-
-                    byte[] data = Encoding.Default.GetBytes(json);
-                    req.ContentLength = data.Length;
-                    using Stream reqStream = req.GetRequestStream();
-                    reqStream.Write(data, 0, data.Length);
-                    reqStream.Close();
-
-                    using HttpWebResponse res = (HttpWebResponse) req.GetResponse();
-                    using StreamReader sr = new StreamReader(res.GetResponseStream());
-                    string resp = sr.ReadToEnd();
 
                     JObject responceJson = JObject.Parse(resp);
 
@@ -110,29 +105,21 @@ namespace LQ1Bot.Plugins {
 
                 text = text[..^5];
                 try {
-                    JObject o = new JObject {
-                        { "phrase", text },
-                        { "page", 1 }
+                    var o = new {
+                        phrase = text,
+                        page = 1
                     };
 
                     string json = JsonConvert.SerializeObject(o, Formatting.None);
                     Console.WriteLine(json);
 
-                    WebRequest req = WebRequest.Create("https://api.jikipedia.com/go/search_entities");
-                    req.Method = "POST";
-                    req.Headers.Add("Client", "web");
-                    req.Headers.Add("Client-Version", "2.6.3l");
-                    req.ContentType = "application/json";
-
-                    byte[] data = Encoding.Default.GetBytes(json);
-                    req.ContentLength = data.Length;
-                    using Stream reqStream = req.GetRequestStream();
-                    reqStream.Write(data, 0, data.Length);
-                    reqStream.Close();
-
-                    using HttpWebResponse res = (HttpWebResponse) req.GetResponse();
-                    using StreamReader sr = new StreamReader(res.GetResponseStream());
-                    string resp = sr.ReadToEnd();
+                    string resp = await "https://api.jikipedia.com/go/search_entities"
+                        .WithHeader("Content-Type", "application/json;charset=utf-8")
+                        .WithHeader("Client", "web")
+                        .WithHeader("Client-Version", "2.7.2k")
+                        .WithHeader("XID", GenerateXID())
+                        .PostJsonAsync(o)
+                        .ReceiveString();
 
                     JObject responceJson = JObject.Parse(resp);
 
@@ -170,6 +157,57 @@ namespace LQ1Bot.Plugins {
                 return true;
             }
             return false;
+        }
+
+        private static string GenerateXID() {
+            //random guid
+            string content = "jikipedia_xid_5ea1338b-2d8d-435d-b04d-0a5d9e41d147";
+            //fixed version info
+            string pwd = "web_2.7.2k_12uh00]35#@(poj[";
+            byte[] key = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(pwd));
+
+            //random iv
+            byte[] iv = RandomNumberGenerator.GetBytes(16);
+            var encrypted = EncryptStringToBytes_Aes(content, key, iv);
+
+            byte[] resultbin = iv.Concat(encrypted).ToArray();
+            return Convert.ToBase64String(resultbin);
+        }
+        private static byte[] EncryptStringToBytes_Aes(string plainText, byte[] Key, byte[] IV) {
+            // Check arguments.
+            if (plainText == null || plainText.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+            byte[] encrypted;
+            // Create an Aes object
+            // with the specified key and IV.
+            using (Aes aesAlg = Aes.Create()) {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                aesAlg.Padding = PaddingMode.PKCS7;
+                aesAlg.Mode = CipherMode.CBC;
+
+                // Create a decrytor to perform the stream transform.
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream()) {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write)) {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt)) {
+
+                            //Write all data to the stream.
+                            swEncrypt.Write(plainText);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+            // Return the encrypted bytes from the memory stream.
+            return encrypted;
         }
     }
 }
