@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 using LQ1Bot.Interface;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Sessions.Http.Managers;
@@ -22,7 +19,7 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> FriendMessage(FriendMessageReceiver e) {
             string text = Utils.GetMessageText(e.MessageChain);
             string q = e.Sender.Id;
-            if (text.Length < 10 && text.StartsWith("天气查询 ")) {
+            if (text.Length < 15 && text.StartsWith("天气查询 ")) {
                 try {
                     string city = text[5..];
                     string result = await $"https://query.asilu.com/weather/gaode/?city={city}"
@@ -60,7 +57,7 @@ namespace LQ1Bot.Plugins {
         public async Task<bool> GroupMessage(GroupMessageReceiver e) {
             string text = Utils.GetMessageText(e.MessageChain);
             string q = e.Sender.Group.Id;
-            if (text.Length < 10 && text.StartsWith("天气查询 ")) {
+            if (text.Length < 15 && text.StartsWith("天气查询 ")) {
                 try {
                     string city = text[5..];
                     string result = await $"https://query.asilu.com/weather/gaode/?city={city}"
