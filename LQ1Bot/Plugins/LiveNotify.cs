@@ -24,7 +24,7 @@ namespace LQ1Bot.Plugins {
         private readonly Dictionary<long, HashSet<long>> UidBind = new();
         private readonly Dictionary<long, long> LastLiveTime = new();
 
-        private const int cooldown = 60;   //冷却时间(s)
+        private const int cooldown = 30;   //冷却时间(s)
 
         public LiveNotify() {
             try {
@@ -137,6 +137,7 @@ namespace LQ1Bot.Plugins {
 
                             foreach (var group in val) {
                                 await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}开播了！\n{title}\nhttps://live.bilibili.com/{roomid}".Append(new ImageMessage() { Url = cover }));
+                                Thread.Sleep(1000);
                             }
                         } else if (livestatus == 0 && LastLiveTime.GetValueOrDefault(mid, 0) > 1) {
                             var groups = UidBind.GetValueOrDefault(mid);
@@ -144,6 +145,7 @@ namespace LQ1Bot.Plugins {
                             File.WriteAllText("livecfg/lastlivetime.json", JsonSerializer.Serialize(LastLiveTime));
                             foreach (var group in groups) {
                                 await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}下播了！");
+                                Thread.Sleep(1000);
                             }
                         }
                     }
