@@ -136,16 +136,20 @@ namespace LQ1Bot.Plugins {
 
 
                             foreach (var group in val) {
-                                await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}开播了！\n{title}\nhttps://live.bilibili.com/{roomid}".Append(new ImageMessage() { Url = cover }));
-                                Thread.Sleep(1000);
+                                try {
+                                    await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}开播了！\n{title}\nhttps://live.bilibili.com/{roomid}".Append(new ImageMessage() { Url = cover }));
+                                    Thread.Sleep(1000);
+                                } catch { }
                             }
                         } else if (livestatus != 1 && LastLiveTime.GetValueOrDefault(mid, 0) > 1) {
                             var groups = UidBind.GetValueOrDefault(mid);
                             LastLiveTime.Remove(mid);
                             File.WriteAllText("livecfg/lastlivetime.json", JsonSerializer.Serialize(LastLiveTime));
                             foreach (var group in groups) {
-                                await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}下播了！");
-                                Thread.Sleep(1000);
+                                try {
+                                    await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}下播了！");
+                                    Thread.Sleep(1000);
+                                } catch { }
                             }
                         }
                     }
