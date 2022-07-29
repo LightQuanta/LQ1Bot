@@ -139,7 +139,7 @@ namespace LQ1Bot.Plugins {
                                 await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}开播了！\n{title}\nhttps://live.bilibili.com/{roomid}".Append(new ImageMessage() { Url = cover }));
                                 Thread.Sleep(1000);
                             }
-                        } else if (livestatus == 0 && LastLiveTime.GetValueOrDefault(mid, 0) > 1) {
+                        } else if (livestatus != 1 && LastLiveTime.GetValueOrDefault(mid, 0) > 1) {
                             var groups = UidBind.GetValueOrDefault(mid);
                             LastLiveTime.Remove(mid);
                             File.WriteAllText("livecfg/lastlivetime.json", JsonSerializer.Serialize(LastLiveTime));
