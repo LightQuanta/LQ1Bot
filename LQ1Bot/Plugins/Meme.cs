@@ -87,7 +87,7 @@ namespace LQ1Bot.Plugins {
                     MemeMgr.Save("meme.json");
                     File.Copy("meme.json", "memebkup/meme-" + DateTime.Now.Ticks + ".json");
                 } else {
-                    await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.NickName}({e.Sender.Id})的的建议\n{text}");
+                    await MessageManager.SendFriendMessageAsync("2224899528", $"来自{e.Sender.NickName}({e.Sender.Id})的建议\n{text}");
                     await MessageManager.SendFriendMessageAsync(e.Sender.Id, "已将建议转发给Light_Quanta");
                 }
                 return true;
@@ -96,7 +96,7 @@ namespace LQ1Bot.Plugins {
                 if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
                     if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
-                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
+                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "").Replace("/0", "");
 
                         await image.Url.DownloadFileAsync("/recordings/botpicture/" + fileName);
 
@@ -397,7 +397,7 @@ namespace LQ1Bot.Plugins {
                 if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
                     if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
-                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
+                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "").Replace("/0", "");
                         await image.Url.DownloadFileAsync("/recordings/botpicture/" + fileName);
 
                         //addmeme
