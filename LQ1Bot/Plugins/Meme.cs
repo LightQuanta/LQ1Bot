@@ -96,9 +96,9 @@ namespace LQ1Bot.Plugins {
                 if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
                     if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
-                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "").Replace("/0", "");
+                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
 
-                        await image.Url.DownloadFileAsync("/recordings/botpicture/" + fileName);
+                        await image.Url.DownloadFileAsync("/recordings/botpicture/", fileName);
 
                         //addmeme
                         string temp = text[8..];
@@ -397,8 +397,8 @@ namespace LQ1Bot.Plugins {
                 if (e.MessageChain.Count() > 2 && e.MessageChain.ToArray()[2] is ImageMessage image) {
                     if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
                         //下载图片
-                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "").Replace("/0", "");
-                        await image.Url.DownloadFileAsync("/recordings/botpicture/" + fileName);
+                        string fileName = image.ImageId.Replace("{", "").Replace("}", "").Replace("-", "");
+                        await image.Url.DownloadFileAsync("/recordings/botpicture/", fileName);
 
                         //addmeme
                         string temp = text[8..];
