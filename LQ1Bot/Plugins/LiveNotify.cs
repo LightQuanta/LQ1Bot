@@ -137,7 +137,10 @@ namespace LQ1Bot.Plugins {
 
                             foreach (var group in val) {
                                 try {
-                                    await MessageManager.SendGroupMessageAsync(group.ToString(), $"{username}开播了！\n{title}\nhttps://live.bilibili.com/{roomid}".Append(new ImageMessage() { Url = cover }));
+                                    await MessageManager.SendGroupMessageAsync(group.ToString(), new MessageChainBuilder()
+                                        .Append(new PlainMessage($"{username}开播了！\n{title}\nhttps://live.bilibili.com/{roomid}"))
+                                        .Append(new ImageMessage() { Url = cover })
+                                        .Build());
                                     Thread.Sleep(1000);
                                 } catch { }
                             }

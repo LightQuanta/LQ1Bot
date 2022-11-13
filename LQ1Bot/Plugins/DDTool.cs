@@ -59,23 +59,25 @@ namespace LQ1Bot.Plugins {
                         bool online = RndVtb["online"].ToObject<bool>();
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
-                        ImageMessage b = new ImageMessage();
-                        b.Url = faceUrl;
                         if (online == false) {
-                            await MessageManager.SendFriendMessageAsync(q, b.Append($@"名称：{userName}
+                            await MessageManager.SendFriendMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(faceUrl)
+                                .Plain($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
-直播间地址：https://live.bilibili.com/{roomId}"));
+直播间地址：https://live.bilibili.com/{roomId}").Build());
                         } else {
-                            await MessageManager.SendFriendMessageAsync(q, b.Append($@"名称：{userName}
+                            await MessageManager.SendFriendMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(faceUrl)
+                                .Plain($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
 
 当前正在直播！
 直播间标题：{title}
-直播间地址：https://live.bilibili.com/{roomId}"));
+直播间地址：https://live.bilibili.com/{roomId}").Build());
                         }
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
@@ -107,10 +109,9 @@ namespace LQ1Bot.Plugins {
                         string sign = RndVtb["sign"].ToString();
                         string title = RndVtb["title"].ToString();
 
-                        ImageMessage b = new ImageMessage();
-                        b.Url = faceUrl;
-
-                        await MessageManager.SendFriendMessageAsync(q, b.Append($@"{title}
+                        await MessageManager.SendFriendMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(faceUrl)
+                                .Plain($@"{title}
 https://live.bilibili.com/{roomId}
 人气：{popularity}
 
@@ -118,7 +119,7 @@ vtb信息
 名称：{userName}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{uid}"));
+主页地址：https://space.bilibili.com/{uid}").Build());
                     } catch (Exception ee) {
                         Console.WriteLine(ee.Message);
                         await MessageManager.SendFriendMessageAsync(q, "获取vtb信息出错");
@@ -152,14 +153,14 @@ vtb信息
                             if (result["code"].ToString() == "0") {
                                 string name = result["data"]["card"]["name"].ToString();
                                 string sign = result["data"]["card"]["sign"].ToString();
-                                ImageMessage b = new ImageMessage();
-                                b.Url = result["data"]["card"]["face"].ToString() + "@150h";
                                 string followers = result["data"]["card"]["fans"].ToString();
 
-                                await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{name}
+                                await MessageManager.SendGroupMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(result["data"]["card"]["face"].ToString() + "@150h")
+                                .Plain($@"名称：{name}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{userId}"));
+主页地址：https://space.bilibili.com/{userId}").Build());
                             } else {
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
@@ -179,25 +180,27 @@ vtb信息
                             bool online = RndVtb["online"].ToObject<bool>();
                             string sign = RndVtb["sign"].ToString();
                             string title = RndVtb["title"].ToString();
-                            ImageMessage b = new ImageMessage();
-                            b.Url = faceUrl;
                             string id = "";
 
                             if (online == false) {
-                                id = await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{userName}
+                                id = await MessageManager.SendGroupMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(faceUrl)
+                                .Plain($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
-直播间地址：https://live.bilibili.com/{roomId}"));
+直播间地址：https://live.bilibili.com/{roomId}").Build());
                             } else {
-                                id = await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{userName}
+                                id = await MessageManager.SendGroupMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(faceUrl)
+                                .Plain($@"名称：{userName}
 签名：{sign}
 粉丝数：{followers}
 主页地址：https://space.bilibili.com/{userId}
 
 当前正在直播！
 直播间标题：{title}
-直播间地址：https://live.bilibili.com/{roomId}"));
+直播间地址：https://live.bilibili.com/{roomId}").Build());
                             }
                             Cooldown.Remove(e.Sender.Id);
                             Cooldown.Add(e.Sender.Id, DateTime.Now);
@@ -223,14 +226,14 @@ vtb信息
                             if (result["code"].ToString() == "0") {
                                 string name = result["data"]["card"]["name"].ToString();
                                 string sign = result["data"]["card"]["sign"].ToString();
-                                ImageMessage b = new ImageMessage();
-                                b.Url = result["data"]["card"]["face"].ToString() + "@150h";
                                 string followers = result["data"]["card"]["fans"].ToString();
 
-                                await MessageManager.SendGroupMessageAsync(q, b.Append($@"名称：{name}
+                                await MessageManager.SendGroupMessageAsync(q, new MessageChainBuilder()
+                                    .ImageFromUrl(result["data"]["card"]["face"].ToString() + "@150h")
+                                    .Plain($@"名称：{name}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{mid}"));
+主页地址：https://space.bilibili.com/{mid}").Build());
                             } else {
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
@@ -254,9 +257,9 @@ vtb信息
                             string online = RndVtb["online"].ToString();
                             string sign = RndVtb["sign"].ToString();
                             string title = RndVtb["title"].ToString();
-                            ImageMessage b = new ImageMessage();
-                            b.Url = faceUrl;
-                            string id = await MessageManager.SendGroupMessageAsync(q, b.Append($@"{title}
+                            string id = await MessageManager.SendGroupMessageAsync(q, new MessageChainBuilder()
+                                .ImageFromUrl(faceUrl)
+                                .Plain($@"{title}
 https://live.bilibili.com/{roomId}
 人气：{popularity}
 
@@ -264,7 +267,7 @@ vtb信息
 名称：{userName}
 签名：{sign}
 粉丝数：{followers}
-主页地址：https://space.bilibili.com/{uid}"));
+主页地址：https://space.bilibili.com/{uid}").Build());
                             Cooldown.Remove(e.Sender.Id);
                             Cooldown.Add(e.Sender.Id, DateTime.Now);
                         }

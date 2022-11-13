@@ -328,7 +328,7 @@ namespace LQ1Bot.Plugins {
                             (new Thread(new ThreadStart(async () => {
                                 Thread.Sleep(60000);
                                 try {
-                                    await MessageManager.RecallAsync(n);
+                                    await MessageManager.RecallAsync(n, e.GroupId);
                                 } catch (Exception) { }
                             }))).Start();
                         }
@@ -350,7 +350,7 @@ namespace LQ1Bot.Plugins {
                             (new Thread(new ThreadStart(async () => {
                                 Thread.Sleep(60000);
                                 try {
-                                    await MessageManager.RecallAsync(n);
+                                    await MessageManager.RecallAsync(n, e.GroupId);
                                 } catch (Exception) { }
                             }))).Start();
                         }
