@@ -10,6 +10,7 @@ using LQ1Bot.Secret;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Sessions;
 using Mirai.Net.Sessions.Http.Managers;
+using Mirai.Net.Utils.Scaffolds;
 
 namespace LQ1Bot {
 
@@ -37,7 +38,15 @@ namespace LQ1Bot {
                             long group = long.Parse(args[1]);
                             string msg = args[2];
                             Console.WriteLine($"群号：{group}\t消息内容：{msg}");
-                            await MessageManager.SendGroupMessageAsync(group.ToString(), msg);
+                            var match = Regex.Match(msg, @"(?<msg>.+)@(?<qq>\d+)$");
+                            if (match.Length > 1) {
+                                await MessageManager.SendGroupMessageAsync(group.ToString(), new MessageChainBuilder()
+                                    .Plain(match.Groups["msg"].ToString())
+                                    .At(match.Groups["qq"].ToString())
+                                    .Build());
+                            } else {
+                                await MessageManager.SendGroupMessageAsync(group.ToString(), msg);
+                            }
                             Console.WriteLine("发送成功");
                             Environment.Exit(0);
                         }
