@@ -314,55 +314,6 @@ namespace LQ1Bot.Plugins {
             string q = e.Sender.Group.Id;
             if (text == "")
                 return false;
-            #region meme回复
-            if (Rep.TryGetValue(e.Sender.Id, out (string, string) valll)) {
-                if (text == valll.Item1) {
-                    if (valll.Item2.StartsWith("[picture]") && valll.Item2.Length > 9) {
-                        var image = new ImageMessage {
-                            Path = $"/recordings/botpicture/{valll.Item2[9..]}"
-                        };
-                        await MessageManager.SendGroupMessageAsync(q, image);
-                    } else {
-                        string n = await MessageManager.SendGroupMessageAsync(q, valll.Item2);
-                        if (valll.Item2.Length > 200) {
-                            (new Thread(new ThreadStart(async () => {
-                                Thread.Sleep(60000);
-                                try {
-                                    await MessageManager.RecallAsync(n, e.GroupId);
-                                } catch (Exception) { }
-                            }))).Start();
-                        }
-                    }
-                    Rep.Remove(e.Sender.Id);
-                    return true;
-                }
-            }
-            if (MemeMgr.HasReply(text)) {
-                var rep = MemeMgr.GetReply(text, long.Parse(q));
-                if (rep != null) {
-                    if (rep.StartsWith("[picture]") && rep.Length > 9) {
-                        ImageMessage image = new ImageMessage();
-                        image.Path = $"/recordings/botpicture/{rep[9..]}";
-                        await MessageManager.SendGroupMessageAsync(q, image);
-                    } else {
-                        string n = await MessageManager.SendGroupMessageAsync(q, rep);
-                        if (rep.Length > 200) {
-                            (new Thread(new ThreadStart(async () => {
-                                Thread.Sleep(60000);
-                                try {
-                                    await MessageManager.RecallAsync(n, e.GroupId);
-                                } catch (Exception) { }
-                            }))).Start();
-                        }
-                    }
-                }
-                return true;
-            }
-            if (text.ToLower() == "guid") {
-                await MessageManager.SendGroupMessageAsync(q, Guid.NewGuid().ToString());
-                return true;
-            }
-            #endregion
             #region meme管理
             if (Regex.IsMatch(text.ToLower(), @"^setmeme ((equal|regexmatch|regexreplace|startswith) )?.+#.+")) {
                 if (PermissionMgr.HasPermissionOrAdmin(e.Sender.Id, "meme")) {
@@ -571,6 +522,55 @@ namespace LQ1Bot.Plugins {
                         }
                     }
                 }
+                return true;
+            }
+            #endregion
+            #region meme回复
+            if (Rep.TryGetValue(e.Sender.Id, out (string, string) valll)) {
+                if (text == valll.Item1) {
+                    if (valll.Item2.StartsWith("[picture]") && valll.Item2.Length > 9) {
+                        var image = new ImageMessage {
+                            Path = $"/recordings/botpicture/{valll.Item2[9..]}"
+                        };
+                        await MessageManager.SendGroupMessageAsync(q, image);
+                    } else {
+                        string n = await MessageManager.SendGroupMessageAsync(q, valll.Item2);
+                        if (valll.Item2.Length > 200) {
+                            (new Thread(new ThreadStart(async () => {
+                                Thread.Sleep(60000);
+                                try {
+                                    await MessageManager.RecallAsync(n, e.GroupId);
+                                } catch (Exception) { }
+                            }))).Start();
+                        }
+                    }
+                    Rep.Remove(e.Sender.Id);
+                    return true;
+                }
+            }
+            if (MemeMgr.HasReply(text)) {
+                var rep = MemeMgr.GetReply(text, long.Parse(q));
+                if (rep != null) {
+                    if (rep.StartsWith("[picture]") && rep.Length > 9) {
+                        ImageMessage image = new ImageMessage();
+                        image.Path = $"/recordings/botpicture/{rep[9..]}";
+                        await MessageManager.SendGroupMessageAsync(q, image);
+                    } else {
+                        string n = await MessageManager.SendGroupMessageAsync(q, rep);
+                        if (rep.Length > 200) {
+                            (new Thread(new ThreadStart(async () => {
+                                Thread.Sleep(60000);
+                                try {
+                                    await MessageManager.RecallAsync(n, e.GroupId);
+                                } catch (Exception) { }
+                            }))).Start();
+                        }
+                    }
+                }
+                return true;
+            }
+            if (text.ToLower() == "guid") {
+                await MessageManager.SendGroupMessageAsync(q, Guid.NewGuid().ToString());
                 return true;
             }
             #endregion
