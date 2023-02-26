@@ -23,6 +23,7 @@ namespace LQ1Bot.Plugins {
         private Dictionary<string, DateTime> Cooldown = new Dictionary<string, DateTime>();
         private Dictionary<string, string> Override = new Dictionary<string, string>();
 
+        private string Api = "https://cfapi.vtbs.moe";
         public DDTool() {
             try {
                 Override = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText("ddtoolcfg/config.json"));
@@ -42,7 +43,7 @@ namespace LQ1Bot.Plugins {
                 case "今天看谁":
                 case "今天d谁":
                     try {
-                        string res = await "https://api.tokyo.vtbs.moe/v1/vtbs".GetStringAsync();
+                        string res = await $"{Api}/v1/vtbs".GetStringAsync();
                         JArray Vtbs = JArray.Parse(res);
 
                         int index = (new Random()).Next(Vtbs.Count);
@@ -50,7 +51,7 @@ namespace LQ1Bot.Plugins {
 
                         string userId = RndVtbId["mid"].ToString();
 
-                        var RndVtb = JObject.Parse(await ("https://api.tokyo.vtbs.moe/v1/detail/" + userId).GetStringAsync());
+                        var RndVtb = JObject.Parse(await ($"{Api}/v1/detail/" + userId).GetStringAsync());
 
                         string userName = RndVtb["uname"].ToString();
                         string roomId = RndVtb["roomid"].ToString();
@@ -89,17 +90,17 @@ namespace LQ1Bot.Plugins {
                 case "现在看谁":
                 case "现在d谁":
                     try {
-                        string res = await "https://api.tokyo.vtbs.moe/v1/living".GetStringAsync();
+                        string res = await $"{Api}/v1/living".GetStringAsync();
                         JArray Vtbs = JArray.Parse(res);
 
                         int index = (new Random()).Next(Vtbs.Count);
                         long RndVtbId = Vtbs[index].ToObject<long>();
 
-                        var RoomInfo = JObject.Parse(await ("https://api.tokyo.vtbs.moe/v1/room/" + RndVtbId).GetStringAsync());
+                        var RoomInfo = JObject.Parse(await ($"{Api}/v1/room/" + RndVtbId).GetStringAsync());
                         string uid = RoomInfo["uid"].ToString();
                         string popularity = RoomInfo["popularity"].ToString();
 
-                        var RndVtb = JObject.Parse(await ("https://api.tokyo.vtbs.moe/v1/detail/" + uid).GetStringAsync());
+                        var RndVtb = JObject.Parse(await ($"{Api}/v1/detail/" + uid).GetStringAsync());
 
                         string userName = RndVtb["uname"].ToString();
                         string roomId = RndVtb["roomid"].ToString();
@@ -165,13 +166,13 @@ vtb信息
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
                         } else {
-                            string res = await ("https://api.tokyo.vtbs.moe/v1/vtbs").GetStringAsync();
+                            string res = await ($"{Api}/v1/vtbs").GetStringAsync();
                             JArray Vtbs = JArray.Parse(res);
 
                             int index = (new Random()).Next(Vtbs.Count);
                             JObject RndVtbId = (JObject) Vtbs[index];
                             userId = RndVtbId["mid"].ToString();
-                            var RndVtb = JObject.Parse(await ("https://api.tokyo.vtbs.moe/v1/detail/" + userId).GetStringAsync());
+                            var RndVtb = JObject.Parse(await ($"{Api}/v1/detail/" + userId).GetStringAsync());
 
                             string userName = RndVtb["uname"].ToString();
                             string roomId = RndVtb["roomid"].ToString();
@@ -238,17 +239,17 @@ vtb信息
                                 await MessageManager.SendGroupMessageAsync(q, "获取vtb信息出错");
                             }
                         } else {
-                            string res = await ("https://api.tokyo.vtbs.moe/v1/living").GetStringAsync();
+                            string res = await ($"{Api}/v1/living").GetStringAsync();
                             JArray Vtbs = JArray.Parse(res);
 
                             int index = (new Random()).Next(Vtbs.Count);
                             string RndVtbId = Vtbs[index].ToObject<string>();
 
-                            var RoomInfo = JObject.Parse(await ("https://api.tokyo.vtbs.moe/v1/room/" + RndVtbId).GetStringAsync());
+                            var RoomInfo = JObject.Parse(await ($"{Api}/v1/room/" + RndVtbId).GetStringAsync());
                             string uid = RoomInfo["uid"].ToString();
                             string popularity = RoomInfo["popularity"].ToString();
 
-                            var RndVtb = JObject.Parse(await ("https://api.tokyo.vtbs.moe/v1/detail/" + uid).GetStringAsync());
+                            var RndVtb = JObject.Parse(await ($"{Api}/v1/detail/" + uid).GetStringAsync());
 
                             string userName = RndVtb["uname"].ToString();
                             string roomId = RndVtb["roomid"].ToString();
