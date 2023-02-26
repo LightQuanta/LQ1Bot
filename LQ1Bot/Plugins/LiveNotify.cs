@@ -117,7 +117,7 @@ namespace LQ1Bot.Plugins {
                 if (data["code"].ToObject<int>() == 0) {
                     JObject livedata = (JObject) data["data"];
                     foreach (var v in livedata.Properties()) {
-                        long mid = int.Parse(v.Name);
+                        long mid = long.Parse(v.Name);
                         long lastlive = v.Value["live_time"].ToObject<long>();      //上次直播时间
                         int livestatus = v.Value["live_status"].ToObject<int>();    //是否开播
 
