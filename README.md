@@ -2,6 +2,8 @@
 
 Light_Quanta[1];整活bot
 
+**注：本项目已经停更，请查看重置版[LQ2Bot](https://github.com/LightQuanta/LQ2Bot/)**
+
 
 ## 特性
 
